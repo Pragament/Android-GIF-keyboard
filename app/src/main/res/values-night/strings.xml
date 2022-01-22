@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="openkeybord">openkeybord</string>
+    <string name="append_link_to_youtube_video_if_available">Append link to youtube video if available</string>
+    <string name="search_by_starts_with">Search by Starts-with</string>
+    <string name="search_by_contains">Search by Endswith</string>
+    <string name="minimum_characters_to_search">Minimum characters to search</string>
+    <string name="show_english_text">Show english text</string>
+    <string name="show_telugu_text">Show telugu text</string>
+    <string name="show_tamil_text">Show tamil text</string>
+</resources>

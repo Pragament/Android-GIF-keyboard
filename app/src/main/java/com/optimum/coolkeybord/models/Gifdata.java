@@ -17,12 +17,24 @@ public class Gifdata {
     @SerializedName("youtube_url")
     @Expose
     private String youtubeUrl;
+//    @SerializedName("youtube_url")
+//    @Expose
+    private Boolean selectedornot;
 
-    public Gifdata(String multilineText, String gif, String thumbnailGif, String youtubeUrl) {
+    public Gifdata(String multilineText, String gif, String thumbnailGif, String youtubeUrl, Boolean selectedornotx) {
         this.multilineText = multilineText;
         this.gif = gif;
         this.thumbnailGif = thumbnailGif;
         this.youtubeUrl = youtubeUrl;
+        this.selectedornot = selectedornotx;
+    }
+
+    public Boolean getSelectedornot() {
+        return selectedornot;
+    }
+
+    public void setSelectedornot(Boolean selectedornot) {
+        this.selectedornot = selectedornot;
     }
 
     public String getMultilineText() {

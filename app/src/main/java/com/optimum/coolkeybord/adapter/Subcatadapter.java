@@ -1,6 +1,7 @@
 package com.optimum.coolkeybord.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ public class Subcatadapter extends   RecyclerView.Adapter<CategoriesAdapter.View
     private ArrayList<Sub_catitemModel> mDataset;
     private Context context;
     private String subType;
+    private  int previousposition = -1;
     // Provide a reference to the views for each data item
 // Complex data items may need more than one view per item, and
 // you provide access to all the views for a data item in a view holder
@@ -52,10 +54,40 @@ public class Subcatadapter extends   RecyclerView.Adapter<CategoriesAdapter.View
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(CategoriesAdapter.ViewHolder holder, int position) {
+
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.catnametxt.setText(mDataset.get(position).getSubcategory());
-//        holder.button.setOnClickListener((View v) -> {
+        if(mDataset.get(position).isSelectedornot())
+        {
+            holder.itemView.setBackground(context.getDrawable(R.drawable.selectedgif));
+        }else {
+            holder.itemView.setBackground(context.getDrawable(R.drawable.disselectback));
+        }
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                changeColour(holder ,position);
+                for(int i =0 ;i < mDataset.size();i++)
+                {
+                    if( i !=position)
+                    {
+                        mDataset.get(i).setSelectedornot(false);
+                        notifyItemChanged(i);
+                    }else {
+                        mDataset.get(position).setSelectedornot(true);
+                        notifyItemChanged(position);
+                    }
+
+                }
+
+                Log.d("Sub " , "cat previousposition "+previousposition);
+            }
+
+           
+        });
+
+        //        holder.button.setOnClickListener((View v) -> {
 //            DatabaseManager db = new DatabaseManager(context);
 //            try {
 //                db.delete(mDataset.get(position).getId(), subType);
@@ -69,9 +101,52 @@ public class Subcatadapter extends   RecyclerView.Adapter<CategoriesAdapter.View
 //        });
     }
 
+    private void changeColour(CategoriesAdapter.ViewHolder holder, int position) {
+        if(previousposition == -1)
+        {
+
+            mDataset.get(position).setSelectedornot(true);
+            holder.itemView.setBackground(context.getDrawable(R.drawable.selectedgif));
+            previousposition = position ;
+            notifyDataSetChanged();
+        }else {
+
+            if(!mDataset.get(position).isSelectedornot())
+            {
+                if(previousposition == position)
+                {
+                    mDataset.get(position).setSelectedornot(false);
+                    holder.itemView.setBackground(context.getDrawable(R.drawable.disselectback));
+                }else {
+                    mDataset.get(position).setSelectedornot(true);
+                    holder.itemView.setBackground(context.getDrawable(R.drawable.selectedgif));
+
+
+                }
+                previousposition = position ;
+            }else {
+
+                mDataset.get(previousposition).setSelectedornot(false);
+                holder.itemView.setBackground(context.getDrawable(R.drawable.disselectback));
+                notifyItemChanged(previousposition);
+
+            }
+        }
+    }
+
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return mDataset.size();
     }
+
+    @Override
+    public int getItemViewType(int position) {
+        return super.getItemViewType(position);
+    }
+
+//    @Override
+//    public long getItemId(int position) {
+//        return position;
+//    }
 }

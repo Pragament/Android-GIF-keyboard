@@ -12,8 +12,9 @@ import com.optimum.coolkeybord.models.Historymodal;
 import java.util.List;
 
 @androidx.room.Dao
-public interface Dao {
-
+public interface WordDao {
+    // allowing the insert of the same word multiple times by passing a
+    // conflict resolution strategy
     // below method is use to
     // add data to database.
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -48,7 +49,5 @@ public interface Dao {
     Integer getWordFrequency(String lastWord);
 
     @Query("SELECT * FROM history_table ORDER BY title ASC")
-    LiveData<List<Dao>> getAllHistoriesfordelete();
-//    Integer getWordFrequency(String lastWord, String mActiveKeyboard);
-//    LiveData<List<Historymodal>> getAllHistories();
+    LiveData<List<Historymodal>> getAllHistoriesfordelete();
 }

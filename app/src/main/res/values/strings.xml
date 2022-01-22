@@ -39,4 +39,12 @@
     <string name="no_result">The word does not exist in the dictionary!</string>
     <string name="about_info"><![CDATA[Afghan Keyboard is a complete solution for both Pashto and Dari (Farsi) Afghanistan national languages along with native numbers and symbols. The application also has English keyboard (letters, numbers & symbols) and Pashto Latin keyboard. This keyboard is built-in which enables users to type Pashto, Pashto Latin, Dari (Farsi) or English letters in any Android application.\n\nThe application is developed based on recommendations and reviews received on our Pashto Keyboard, therefore we highly recommend to post your reviews to help us serve you best.\n\nSend us an email at info@sunzala.com, if you have any concerns.]]></string>
     <string name="removed_word">The word is removed from the dictionary!</string>
+    <string name="openkeybord">openkeybord</string>
+    <string name="append_link_to_youtube_video_if_available">Append link to youtube video if available</string>
+    <string name="search_by_starts_with">Search by Starts-with</string>
+    <string name="search_by_contains">Search by Endswith</string>
+    <string name="minimum_characters_to_search">Minimum characters to search</string>
+    <string name="show_english_text">Show english text</string>
+    <string name="show_telugu_text">Show telugu text</string>
+    <string name="show_tamil_text">Show tamil text</string>
 </resources>

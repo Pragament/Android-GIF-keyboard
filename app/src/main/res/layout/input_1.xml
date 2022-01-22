@@ -31,6 +31,18 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <androidx.cardview.widget.CardView
+       android:paddingBottom="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+       <androidx.recyclerview.widget.RecyclerView
+           android:background="@color/white"
+           android:id="@+id/historyrecs"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content">
+
+       </androidx.recyclerview.widget.RecyclerView>
+    </androidx.cardview.widget.CardView>
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <FrameLayout
@@ -39,13 +51,13 @@
             <EditText
 
                 android:visibility="invisible"
-                android:paddingStart="8dp"
+                android:paddingStart="0dp"
                 android:hint="Search gif sub or categories "
                 android:background="@color/white"
                 android:layout_margin="8dp"
                 android:id="@+id/searched"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="35dp"
                 ></EditText>
             <ImageView
                 android:visibility="gone"
@@ -98,7 +110,7 @@
         android:keyBackground="@drawable/key_bg_transparent"
         android:keyPreviewLayout="@layout/key_preview_layout"
         android:keyPreviewOffset="@dimen/keyPreviewOffset"
-        android:keyTextColor="@color/black"
+        android:keyTextColor="@color/white"
         android:popupLayout="@layout/keyboard_popup_layout"
         xmlns:android="http://schemas.android.com/apk/res/android" />
 <!--        android:popupLayout="@layout/keyboard_popup_layout"-->

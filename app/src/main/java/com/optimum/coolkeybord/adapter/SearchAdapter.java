@@ -14,7 +14,6 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.optimum.coolkeybord.R;
-import com.optimum.coolkeybord.database.DatabaseManager;
 
 import java.util.ArrayList;
 
@@ -62,12 +61,12 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         // - replace the contents of the view with that element
         holder.mTextView.setText(mDataset.get(position));
         holder.button.setOnClickListener((View v) -> {
-            DatabaseManager db = new DatabaseManager(context);
-            try {
-                db.delete(mDataset.get(position), subType);
-            } catch (Exception e) {
-                Log.d("Exception Error", String.valueOf(e));
-            }
+//            DatabaseManager db = new DatabaseManager(context);
+//            try {
+//                db.delete(mDataset.get(position), subType);
+//            } catch (Exception e) {
+//                Log.d("Exception Error", String.valueOf(e));
+//            }
 
             mDataset.remove(position);
             this.notifyDataSetChanged();

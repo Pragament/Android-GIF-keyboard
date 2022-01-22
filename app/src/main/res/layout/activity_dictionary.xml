@@ -6,79 +6,313 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".DictionaryActivity">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout2"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/settingspage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent">
+        <androidx.appcompat.widget.LinearLayoutCompat
 
+            android:orientation="vertical"
 
-        <EditText
-            android:id="@+id/searchText"
+            android:background="@color/white"
             android:layout_width="match_parent"
-            android:layout_height="49dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="8dp"
-            android:ems="10"
-            android:hint="@string/search_word"
-            android:inputType="text"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/infoTextView" />
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/backimgtogif"
+                android:padding="15dp"
+                android:src="@drawable/gph_ic_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/infoTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="8dp"
-            android:text="@string/search_description"
-            android:textAlignment="center"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            </ImageView>
+            <androidx.cardview.widget.CardView
+                app:cardCornerRadius="5dp"
+                android:elevation="5dp"
+                app:cardElevation="5dp"
 
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="0dp"
-        android:layout_height="45dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="10dp"
-        app:layout_constraintEnd_toStartOf="@+id/searchButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
+                app:cardUseCompatPadding="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <CheckBox
+                    android:onClick="onClick"
+                    android:layout_gravity="center_horizontal"
+                    android:button="@null"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+                    android:textColor="@color/black"
+                    android:textAlignment="center"
+                    android:textSize="18sp"
+                    android:text="@string/append_link_to_youtube_video_if_available"
+                    android:id="@+id/youtubehcekc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    >
 
-    <Button
-        android:id="@+id/searchButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/design_default_color_primary_dark"
-        android:text="@string/search"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
+                </CheckBox>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner" />
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/startendcard"
+                app:cardCornerRadius="5dp"
+                android:elevation="5dp"
+                app:cardElevation="5dp"
+                android:layout_margin="5dp"
+                app:cardUseCompatPadding="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <RadioGroup
+                    android:id="@+id/starconrd"
+                    app:cardCornerRadius="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RadioButton
+
+                        android:layoutDirection="rtl"
+                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:text="@string/search_by_starts_with"
+                        android:id="@+id/searchbystart"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </RadioButton>
+                    <RadioButton
+                        android:layoutDirection="rtl"
+                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:text="@string/search_by_contains"
+                        android:id="@+id/searchbycontains"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </RadioButton>
+                </RadioGroup>
+
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                app:cardCornerRadius="5dp"
+                android:elevation="5dp"
+                app:cardElevation="5dp"
+                android:layout_margin="5dp"
+                app:cardUseCompatPadding="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:textSize="20dp"
+                        android:textColor="@color/black"
+
+                        android:textAlignment="center"
+                        android:text="@string/minimum_characters_to_search"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+                    <LinearLayout
+                        android:weightSum="3"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <ImageView
+
+                                android:layout_weight="1"
+                                android:id="@+id/increase_char"
+                                android:padding="10dp"
+                                android:rotation="90"
+                                android:src="@drawable/ic_baseline_arrowios_24"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                            </ImageView>
+
+                        </LinearLayout>
+                        <TextView
+                            android:layout_weight="1"
+                            android:layout_below="@+id/increase_char"
+                            android:id="@+id/minout_txt"
+                            android:textSize="25dp"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            android:textAlignment="center"
+                            android:text="2"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                        </TextView>
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <ImageView
+
+                                android:layout_weight="1"
+                                android:layout_below="@+id/minout_txt"
+                                android:id="@+id/decrease_char"
+                                android:padding="10dp"
+                                android:rotation="270"
+                                android:src="@drawable/ic_baseline_arrowios_24"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                            </ImageView>
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+<!--                <EditText-->
+<!--                    android:id="@+id/maxnumtosearch"-->
+<!--                    android:inputType="numberSigned"-->
+<!--                    android:gravity="center_horizontal"-->
+<!--                    android:hint="@string/minimum_characters_to_search"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content">-->
+
+<!--                </EditText>-->
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                    android:id="@+id/langcard"
+                app:cardCornerRadius="5dp"
+                android:elevation="5dp"
+                app:cardElevation="5dp"
+                android:layout_margin="5dp"
+                app:cardUseCompatPadding="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:id="@+id/lanradgroupli"
+                    app:cardCornerRadius="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <CheckBox
+
+                        android:layoutDirection="rtl"
+                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:text="@string/show_english_text"
+                        android:id="@+id/showench_ch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </CheckBox>
+                    <CheckBox
+
+                        android:layoutDirection="rtl"
+                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:text="@string/show_telugu_text"
+                        android:id="@+id/showtel_ch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </CheckBox>
+                    <CheckBox
+
+                        android:layoutDirection="rtl"
+                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:text="@string/show_tamil_text"
+                        android:id="@+id/showtamil_ch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </CheckBox>
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.core.widget.NestedScrollView>
+
+<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--        -->
+<!--        android:id="@+id/constraintLayout2"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintTop_toTopOf="parent">-->
+
+
+<!--        <EditText-->
+<!--            android:id="@+id/searchText"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="49dp"-->
+<!--            android:layout_marginStart="8dp"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:layout_marginEnd="8dp"-->
+<!--            android:ems="10"-->
+<!--            android:hint="@string/search_word"-->
+<!--            android:inputType="text"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.0"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/infoTextView" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/infoTextView"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="8dp"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:layout_marginEnd="8dp"-->
+<!--            android:text="@string/search_description"-->
+<!--            android:textAlignment="center"-->
+<!--            android:textSize="18sp"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
+<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+<!--    <Spinner-->
+<!--        android:id="@+id/spinner"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="45dp"-->
+<!--        android:layout_marginEnd="8dp"-->
+<!--        android:layout_marginStart="8dp"-->
+<!--        android:layout_marginTop="10dp"-->
+<!--        app:layout_constraintEnd_toStartOf="@+id/searchButton"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />-->
+
+<!--    <Button-->
+<!--        android:id="@+id/searchButton"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginEnd="8dp"-->
+<!--        android:layout_marginTop="10dp"-->
+<!--        android:background="@color/design_default_color_primary_dark"-->
+<!--        android:text="@string/search"-->
+<!--        android:textColor="@color/white"-->
+<!--        android:textStyle="bold"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />-->
+
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/recyclerView"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_marginBottom="8dp"-->
+<!--        android:layout_marginEnd="8dp"-->
+<!--        android:layout_marginStart="8dp"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/spinner" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

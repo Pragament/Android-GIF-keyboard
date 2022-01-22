@@ -1,5 +1,6 @@
 package com.optimum.coolkeybord.models;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -13,7 +14,8 @@ public class Historymodal {
     // below line is to auto increment
     // id for each course.
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
+//    @PrimaryKey()
+//    @ColumnInfo(name = "id")
     int id;
 
     @ColumnInfo(name = "title")
@@ -32,8 +34,8 @@ public class Historymodal {
 //        this.occurrence = occurrence;
 //    }
 
-    public Historymodal(int id, String title, String type, String girurl, int occurrence) {
-        this.id = id;
+    public Historymodal(String title, String type, String girurl, int occurrence) {
+//        this.id = id;
         this.title = title;
         this.type = type;
         this.girurl = girurl;
