@@ -1,6 +1,7 @@
 package com.optimum.coolkeybord.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,13 +54,17 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
     public void onBindViewHolder(CategoriesAdapter.ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
+        int pos = position;
+        Log.e("pos" , ""+mDataset.get(position).isSelectedornot());
         holder.catnametxt.setText(mDataset.get(position).getCatname());
-//        if(mDataset.get(position).isSelectedornot())
-//        {
-//            holder.itemView.setBackground(context.getDrawable(R.drawable.selectedgif));
-//        }else {
-//            holder.itemView.setBackground(context.getDrawable(R.drawable.disselectback));
-//        }
+        if(mDataset.get(position).isSelectedornot())
+        {
+            holder.itemView.setBackground(context.getDrawable(R.drawable.selectedgif));
+        }else {
+            holder.itemView.setBackground(context.getDrawable(R.drawable.disselectback));
+        }
+
+
 //        try{
 //            for(int i =0 ;i < mDataset.size();i++)
 //            {
@@ -98,10 +103,9 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
         return mDataset.size();
     }
 
-
-
     @Override
     public int getItemViewType(int position) {
-        return super.getItemViewType(position);
+//        return super.getItemViewType(position);
+        return   position;
     }
 }

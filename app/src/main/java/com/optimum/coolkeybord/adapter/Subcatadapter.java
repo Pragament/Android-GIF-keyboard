@@ -53,7 +53,7 @@ public class Subcatadapter extends   RecyclerView.Adapter<CategoriesAdapter.View
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(CategoriesAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(CategoriesAdapter.ViewHolder holder, final int position) {
 
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
@@ -142,7 +142,8 @@ public class Subcatadapter extends   RecyclerView.Adapter<CategoriesAdapter.View
 
     @Override
     public int getItemViewType(int position) {
-        return super.getItemViewType(position);
+//        return super.getItemViewType(position);
+      return   position;
     }
 
 //    @Override

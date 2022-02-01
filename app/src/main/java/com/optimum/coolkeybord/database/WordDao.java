@@ -8,6 +8,7 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.optimum.coolkeybord.models.Historymodal;
+import com.optimum.coolkeybord.models.RecentGifEntity;
 
 import java.util.List;
 
@@ -19,6 +20,9 @@ public interface WordDao {
     // add data to database.
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Historymodal... model);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertRecentGif(RecentGifEntity... model);
 
     // below method is use to update
     // the data in our database.
@@ -50,4 +54,7 @@ public interface WordDao {
 
     @Query("SELECT * FROM history_table ORDER BY title ASC")
     LiveData<List<Historymodal>> getAllHistoriesfordelete();
+
+    @Query("SELECT * FROM gIFtable ORDER BY id DESC")
+    LiveData<List<RecentGifEntity>> getAllRecentGifviewmodels();
 }

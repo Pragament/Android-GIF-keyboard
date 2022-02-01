@@ -1,6 +1,8 @@
 
 package com.optimum.coolkeybord.android;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
 import android.annotation.SuppressLint;
 import android.app.AppOpsManager;
 import android.app.Dialog;
@@ -17,6 +19,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -38,6 +41,7 @@ import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -56,6 +60,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.gson.Gson;
+import com.optimum.coolkeybord.DictionaryActivity;
 import com.optimum.coolkeybord.R;
 import com.optimum.coolkeybord.adapter.Historyadapter;
 import com.optimum.coolkeybord.database.Dao;
@@ -65,6 +71,7 @@ import com.optimum.coolkeybord.database.Historyviewmodel;
 import com.optimum.coolkeybord.gifview.Gifgridviewpopup;
 import com.optimum.coolkeybord.models.Gifdata;
 import com.optimum.coolkeybord.models.Historymodal;
+import com.optimum.coolkeybord.models.RecentGifEntity;
 import com.optimum.coolkeybord.settingssession.SettingSesson;
 
 import java.io.File;
@@ -75,8 +82,6 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-
-import timber.log.Timber;
 
 public class SoftKeyboard extends InputMethodService
         implements KeyboardView.OnKeyboardActionListener ,  InputConnectionCompat.OnCommitContentListener , HistoryClicked {
@@ -96,12 +101,14 @@ public class SoftKeyboard extends InputMethodService
     //++++For gif keybord+++++
     private LatinKeyboardView keyboardxxview;
     private EditText searched;
+    private LinearLayout settingsimg;
     Historyadapter historyadapter;
     private RecyclerView historyrecs;
      private  ArrayList<Historymodal> usershisatories = new ArrayList<>();
     private ImageView searchimg;
     private ImageView cancelimg;
     private ImageView searchimgdone;
+    private LinearLayout lineartopli;
     private SettingSesson settingSesson;
     private File mGifFile;
     private static final String AUTHORITY = "com.optimum.coolkeybord";
@@ -149,6 +156,9 @@ public class SoftKeyboard extends InputMethodService
 //            R.layout.input_8, R.layout.input_9, R.layout.input_10};
     private Dao userDao;
     private File imagesDir;
+    private LinearLayout vx;
+//    private FrameLayout vx;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -238,22 +248,32 @@ public class SoftKeyboard extends InputMethodService
     public View onCreateInputView() {
 
         // Set custom theme to input view.
-       View  vx = (LinearLayout) getLayoutInflater().inflate(R.layout.input_1, null);
+         vx = (LinearLayout) getLayoutInflater().inflate(R.layout.input_1, null);
 //       View  vx = (LinearLayout) getLayoutInflater().inflate(THE_LAYOUTS[sharedPreferences.getInt(THEME_KEY, 0)], null);
+        lineartopli = (LinearLayout) vx.findViewById(R.id.lineartopli);
         searched = (EditText) vx.findViewById(R.id.searched);
+        settingsimg = (LinearLayout) vx.findViewById(R.id.settingsimg);
         historyrecs = (RecyclerView) vx.findViewById(R.id.historyrecs);
         historyrecs.setLayoutManager(new LinearLayoutManager(vx.getContext() ,LinearLayoutManager.HORIZONTAL, false));
         searchimg =  vx.findViewById(R.id.searchimg);
         cancelimg =  vx.findViewById(R.id.cancelimg);
         searchimgdone =  vx.findViewById(R.id.searchimgdone);
 //        mInputView = (LatinKeyboardView) vx.findViewById(R.id.keyboardxx);
-        mInputView = (LatinKeyboardView) vx.findViewById(R.id.keyboard);
+        mInputView = (LatinKeyboardView) vx.findViewById(R.id.keyboardxx);
         keyboardxxview = (LatinKeyboardView) vx.findViewById(R.id.keyboardxx);
 //        settingSesson = new SettingSesson(vx.getContext());
+        settingsimg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext() ,DictionaryActivity.class);
+                intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                view.getContext().startActivity(intent);
+            }
+        });
         searched.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                searched.setSelection(searched.getText().length());
             }
 
             @Override
@@ -266,12 +286,12 @@ public class SoftKeyboard extends InputMethodService
                     cancelimg.setVisibility(View.GONE);
                     searchimgdone.setVisibility(View.VISIBLE);
                 }
-
+                searched.setSelection(searched.getText().length());
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                searched.setSelection(searched.getText().length());
             }
         });
         searchimgdone.setOnClickListener(new View.OnClickListener() {
@@ -280,9 +300,9 @@ public class SoftKeyboard extends InputMethodService
 //                onSearchDoneListner.onSearchDone(searched.getText().toString());
                 if(searched.getText().toString().equals(""))
                 {
-                    showGifGridview("");
+                    showGifGridview("" ,historyviewmodel , 0, mInputView);
                 }else {
-                    showGifGridview(searched.getText().toString());
+                    showGifGridview(searched.getText().toString(), historyviewmodel ,1, mInputView);
                 }
                 addUpdateWord(v.getContext());
             }
@@ -330,7 +350,7 @@ public class SoftKeyboard extends InputMethodService
 
         // Apply the selected keyboard to the input view.
         setLatinKeyboard(getSelectedSubtype());
-
+        showGifGridview("" ,historyviewmodel , 0, mInputView);
 //        showGifGridview("");
 //        return mInputView;
         return vx;
@@ -484,7 +504,26 @@ public class SoftKeyboard extends InputMethodService
         mCandidateView = new CandidateView(this);
         mCandidateView.setService(this);
         historyClicked = SoftKeyboard.this;
+//
         return mCandidateView;
+    }
+
+    @Override
+    public void onWindowShown() {
+//        onKey(-111334, null);
+        new CountDownTimer(300, 100) {
+
+            public void onTick(long millisUntilFinished) {
+                Log.e("Counter" , "tickin"+"seconds remaining: " + millisUntilFinished / 1000);
+//                textView.setText("seconds remaining: " + millisUntilFinished / 1000);
+            }
+
+            public void onFinish() {
+                showGifGridview("" ,historyviewmodel , 0, mInputView);
+            }
+        }.start();
+
+        super.onWindowShown();
     }
 
     /**
@@ -599,6 +638,7 @@ public class SoftKeyboard extends InputMethodService
             historyrecs.setAdapter(historyadapter);
             historyadapter.notifyDataSetChanged();
         });
+
 //        historyDatabase = HistoryDatabase.getInstance(this);
 
 //        AsyncTask.execute(new Runnable() {
@@ -695,7 +735,7 @@ public class SoftKeyboard extends InputMethodService
         } else {
             Log.e("It is " , "Gif NOT supported");
         }
-        onKey(-111334, null);
+//        onKey(-111334, null);
     }
 
     /**
@@ -750,12 +790,25 @@ public class SoftKeyboard extends InputMethodService
         }
     }
 
+    @Override
+    public Dialog getWindow() {
+        return super.getWindow();
+    }
+
+    @Override
+    public boolean isInputViewShown() {
+//        onKey(-111334, null);
+
+        return super.isInputViewShown();
+    }
+
     /**
      * This tells us about completions that the editor has determined based
      * on the current text in it.  We want to use this in fullscreen mode
      * to show the completions ourselves, since the editor can not be seen
      * in that situation.
      */
+
     @Override
     public void onDisplayCompletions(CompletionInfo[] completions) {
         if (mCompletionOn) {
@@ -1016,9 +1069,9 @@ public class SoftKeyboard extends InputMethodService
 //            showEmoticons();
             if(searched.getText().toString().equals(""))
             {
-                showGifGridview("");
+                showGifGridview("", historyviewmodel ,0 ,mInputView);
             }else {
-                showGifGridview(searched.getText().toString());
+                showGifGridview(searched.getText().toString(), historyviewmodel ,1, mInputView);
             }
 
         } else if (primaryCode == -10001) {
@@ -1215,6 +1268,7 @@ public class SoftKeyboard extends InputMethodService
         if (window == null) {
             return null;
         }
+
         return window.getAttributes().token;
     }
 
@@ -1320,24 +1374,44 @@ public class SoftKeyboard extends InputMethodService
     /**
      * This method displays Gifs when called.
      * @param
+     * @param historyviewmodel
      */
-    private void showGifGridview(String searchtext) {
+    private void showGifGridview(String searchtext, Historyviewmodel historyviewmodel, int pos, LatinKeyboardView mInputViewx) {
         try{
-            LayoutInflater layoutInflater = (LayoutInflater) getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+//            LayoutInflater layoutInflater = (LayoutInflater) getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+            LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
 //        View view = dialog.getView();
             if (layoutInflater != null) {
-                View popupView = layoutInflater.inflate(R.layout.gifgridviewlayout, null);
-                gifpopupWindow = new Gifgridviewpopup(popupView, this ,searchtext);
+
+//                Window window = getWindow().getWindow();
+//                WindowManager.LayoutParams lp = window.getAttributes();
+//                lp.token = mInputView.getWindowToken();
+//                lp.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
+//                window.setAttributes(lp);
+//                window.addFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+                View popupView = layoutInflater.inflate(R.layout.gifgridviewlayout, null );
+//                gifpopupWindow = new Gifgridviewpopup(popupView, this ,searchtext ,historyviewmodel);
+                gifpopupWindow = new Gifgridviewpopup(popupView, this ,searchtext ,historyviewmodel);
                 gifpopupWindow.setSizeForSoftKeyboard();
-                gifpopupWindow.setSize(mQwertyKeyboard.getMinWidth()+50, (mQwertyKeyboard.getHeight() +120));
+                gifpopupWindow.setSize(mQwertyKeyboard.getMinWidth() +20, (mQwertyKeyboard.getHeight() +120));
 //            gifpopupWindow.setSize(getMaxWidth(), LayoutParams.WRAP_CONTENT);
+//                gifpopupWindow.showAtLocation(mInputView.getRootView(), Gravity.BOTTOM, 0, 0);
+//                popupView.wind.setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+//                gifpopupWindow.showAtLocation(mInputView, Gravity.BOTTOM, 0, 0);
+//                gifpopupWindow.showAtLocation(vx, Gravity.BOTTOM, 0, 0);
+//                mInputView = (LatinKeyboardView) vx.findViewById(R.id.keyboardxx);
+//                View myPoppyView = mInputView.getRootView();
                 gifpopupWindow.showAtLocation(mInputView.getRootView(), Gravity.BOTTOM, 0, 0);
                 gifpopupWindow.setOnGifclickedListnermethod(new Gifgridviewpopup.onGifclickedListner() {
                     @Override
-                    public void onGifclicked(Gifdata gifitem, SettingSesson settingSesson) {
+                    public void onGifclicked(Gifdata gifitem, SettingSesson settingSesson ,int pos) {
                         settingSesson = new SettingSesson(gifpopupWindow.getContentView().getContext());
 //                    Log.e("A Gifdata" ,"Gif choosen "+gifitem.getMultilineText());
                         Boolean sessionsx = settingSesson.getAppendlink();
+                        if(pos ==1)
+                        {
+                            SoftKeyboard.this.historyviewmodel.insertgif(new RecentGifEntity(new Gson().toJson(gifitem, Gifdata.class)));
+                        }
 
                         Log.e("settingSesson Gifdata" ,"Gif getAppendlink "+sessionsx);
                         Glide.with(popupView.getContext()).asGif()
@@ -1347,8 +1421,15 @@ public class SoftKeyboard extends InputMethodService
                                     @Override
                                     public void onResourceReady(@NonNull GifDrawable gifDrawable, @Nullable Transition<? super GifDrawable> transition) {
                                         InputConnection ic = getCurrentInputConnection();
-                                        ic.commitText(gifitem.getYoutubeUrl() ,15);
-                                        ic.finishComposingText();
+                                        if(sessionsx)
+                                        {
+                                            ic.commitText(gifitem.getYoutubeUrl() +"\n "+gifitem.getMultilineText() ,15);
+                                            ic.finishComposingText();
+                                        }else {
+                                            ic.commitText(gifitem.getMultilineText() ,15);
+                                            ic.finishComposingText();
+                                        }
+
 //                                        mComposing.append(gifitem.getMultilineText());
 //                                        Log.e("Data"  , ""+ mComposing.toString());
 //                                        commitTyped(getCurrentInputConnection());
@@ -1385,7 +1466,16 @@ public class SoftKeyboard extends InputMethodService
             }
         }catch (Exception e)
         {
+        Log.e("softkeyboard" , "token not found");
             e.printStackTrace();
+
+//            if(pos !=2)
+//            {
+////                mInputView.setVisibility(View.VISIBLE);
+//                showGifGridview("", historyviewmodel,2 , mInputView);
+//            }
+
+
         }
 
     }
@@ -1402,7 +1492,7 @@ public class SoftKeyboard extends InputMethodService
 
     @Override
     public void OnHstoryclicked(Historymodal historymodal) {
-        showGifGridview(historymodal.getTitle().toString());
+        showGifGridview(historymodal.getTitle().toString(), historyviewmodel, 0, mInputView);
         Log.e("Got" , "some model");
     }
 

@@ -144,6 +144,12 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
                 settingSesson.setMinimumcharacters(minout_txt.getText().toString());
             }
         });
+        youtubehcekc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                settingSesson.appendlinkyou(b);
+            }
+        });
 //        languageSpinner = findViewById(R.id.spinner);
 //        searchEditText = findViewById(R.id.searchText);
 //        Button searchButton = findViewById(R.id.searchButton);
@@ -176,11 +182,11 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.youtubehcekc) {//
-            Toast.makeText(v.getContext() ,"Enabled" ,Toast.LENGTH_LONG).show();
-            //          search();
-            settingSesson.appendlinkyou(true);
-        }
+//        if (v.getId() == R.id.youtubehcekc) {//
+//            Toast.makeText(v.getContext() ,"Enabled" ,Toast.LENGTH_LONG).show();
+//            //          search();
+//            settingSesson.appendlinkyou(true);
+//        }
     }
 
 //    private void search() {

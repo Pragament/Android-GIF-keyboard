@@ -11,12 +11,13 @@ import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.optimum.coolkeybord.models.Historymodal;
+import com.optimum.coolkeybord.models.RecentGifEntity;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 // adding annotation for our database entities and db version.
-@Database(entities = {Historymodal.class}, version = 1)
+@Database(entities = {Historymodal.class, RecentGifEntity.class}, version = 1)
 public abstract class HistoryDatabase extends RoomDatabase {
 
     public abstract WordDao wordDao();

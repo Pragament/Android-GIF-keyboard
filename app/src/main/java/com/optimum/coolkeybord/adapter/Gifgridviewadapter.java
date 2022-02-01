@@ -70,7 +70,7 @@ public class Gifgridviewadapter extends   RecyclerView.Adapter<Gifgridviewadapte
 //                .load(mDataset.get(position).getThumbnailGif())
 //                .into(holder.gifitemgg);
 
-        Glide.with(context).load(mDataset.get(position).getGif())
+        Glide.with(context).load(mDataset.get(position).getThumbnailGif())
                 .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                 .error(R.drawable.exo_rounded_rectangle)
                 .listener(new RequestListener<Drawable>() {

@@ -11,6 +11,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
@@ -18,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -33,12 +35,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.common.reflect.TypeToken;
 import com.optimum.coolkeybord.DictionaryActivity;
 import com.optimum.coolkeybord.R;
 import com.optimum.coolkeybord.adapter.CategoriesAdapter;
 import com.optimum.coolkeybord.adapter.Gifgridviewadapter;
 import com.optimum.coolkeybord.adapter.Subcatadapter;
+import com.optimum.coolkeybord.database.Historyviewmodel;
 import com.optimum.coolkeybord.listners.ItemWrapper;
 import com.optimum.coolkeybord.listners.RecyclerItemClickListener;
 import com.optimum.coolkeybord.models.Categoriesmodel;
@@ -50,31 +52,39 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
+import timber.log.Timber;
 
 public class Gifgridviewpopup extends PopupWindow {
     //++++++++++++++++++++++++++++++++++++++++++++RecyclerView of gifs++++++++++++++++++++++++++++
     private SettingSesson settingSesson;
     private RecyclerView categoriesrec;
     private RecyclerView subcatrec;
-    private ImageView settings;
     private ImageView backimgtogif;
     private RecyclerView gifgridlay;
+    private RecyclerView recentgifrec;
+    private LinearLayout lineartopli;
+    //++++++++++++++++++++++++++++++Progress bar++++++++++++++++++++++
     private ProgressBar progresbarfull;
+    private RelativeLayout progresbarfulli;
+    //+++++++++++++++++++++++++++++++++++++++++++++++++
     ArrayList<Categoriesmodel> categoriesmodelArrayList = new ArrayList<>();
     ArrayList<Sub_catitemModel>  subcategoriesmodelArrayList = new ArrayList<>();
     ArrayList<Gifdata> subgifdataArrayList = new ArrayList<>();
+    ArrayList<Gifdata> recentsubgifdataArrayList = new ArrayList<>();
     private CategoriesAdapter categoriesAdapter;
     private Subcatadapter subcatadapter;
     private CategoriesAdapter subcategoriesAdapter;
     private Gifgridviewadapter gifgridviewadapter;
+    private Gifgridviewadapter recentgifgridviewadapter;
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     View rootView;
     String searchtext;
@@ -82,18 +92,22 @@ public class Gifgridviewpopup extends PopupWindow {
     private Boolean isOpened = false;
     private int keyBoardHeight = 0;
     private Boolean pendingOpen = false;
+    Historyviewmodel historyviewmodel;
     EmojiconsPopup.OnSoftKeyboardOpenCloseListener onSoftKeyboardOpenCloseListener;
     private onGifclickedListner onGifclickedListner;
+    private onGifclickedListner onGifclickedListner2;
+    private int processisnotdone = 0;
 
 
-    public Gifgridviewpopup(View rootView, Context mContext, String searchtextx) {
+    public Gifgridviewpopup(View rootView, Context mContext, String searchtextx, Historyviewmodel historyviewmodelx) {
         super(mContext);
         this.mContext = mContext;
         this.rootView = rootView;
         this.searchtext = searchtextx;
+        this.historyviewmodel = historyviewmodelx;
+
 
         View customView = createCustomView();
-
         setContentView(customView);
 
         setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
@@ -106,12 +120,22 @@ public class Gifgridviewpopup extends PopupWindow {
     private View createCustomView() {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.gifgridviewlayout, null, false);
+        LinearLayout recent_gfs = (LinearLayout) view.findViewById(R.id.recent_gfs);
         gifgridlay = (RecyclerView) view.findViewById(R.id.gridlay);
-
-        settings = view.findViewById(R.id.settings);
+        recentgifrec = (RecyclerView) view.findViewById(R.id.recentgif);
+        ///+++++++++++++++++++++++++++++++++++++++++++Gif made++++++++++++++++++++++++++++++++++++++++++++++
+        categoriesrec = (RecyclerView) view.findViewById(R.id.categoriesrec);
+        subcatrec = (RecyclerView) view.findViewById(R.id.subcatrec);
+        //+++++++++++++++++++++++++++++++++++Progress bar++++++++++++++++++++++++++++++
+        progresbarfull = (ProgressBar) view.findViewById(R.id.progresbarfull);
+        progresbarfulli = (RelativeLayout) view.findViewById(R.id.progresbarfulli);
+        //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        ImageView settings = view.findViewById(R.id.settings);
         backimgtogif = view.findViewById(R.id.backimgtogif);
 //        makeTempGifs();
         gifgridlay.setLayoutManager(new GridLayoutManager(mContext , 3 ));
+        recentgifrec.setLayoutManager(new GridLayoutManager(mContext , 3 ));
+
 
         gifgridlay.addOnItemTouchListener(new RecyclerItemClickListener(mContext, gifgridlay, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
@@ -121,11 +145,11 @@ public class Gifgridviewpopup extends PopupWindow {
                 {
                     subgifdataArrayList.get(position).setSelectedornot(true);
                     topli.setBackground(view.getContext().getDrawable(R.drawable.selectedgif));
-                    onGifclickedListner.onGifclicked(subgifdataArrayList.get(position) ,settingSesson);
+                    onGifclickedListner.onGifclicked(subgifdataArrayList.get(position) ,settingSesson , 1);
                 }else {
                     subgifdataArrayList.get(position).setSelectedornot(false);
                     topli.setBackground(view.getContext().getDrawable(R.drawable.disselectback));
-                    onGifclickedListner.onGifclicked(subgifdataArrayList.get(position) ,settingSesson);
+                    onGifclickedListner.onGifclicked(subgifdataArrayList.get(position) ,settingSesson,1);
                 }
 
             }
@@ -135,6 +159,67 @@ public class Gifgridviewpopup extends PopupWindow {
 
             }
         }));
+        recentgifrec.addOnItemTouchListener(new RecyclerItemClickListener(mContext, recentgifrec, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                LinearLayout topli = view.findViewById(R.id.topli);
+                if(!recentsubgifdataArrayList.get(position).getSelectedornot())
+                {
+                    recentsubgifdataArrayList.get(position).setSelectedornot(true);
+                    topli.setBackground(view.getContext().getDrawable(R.drawable.selectedgif));
+                    onGifclickedListner.onGifclicked(recentsubgifdataArrayList.get(position) ,settingSesson ,2);
+                }else {
+                    recentsubgifdataArrayList.get(position).setSelectedornot(false);
+                    topli.setBackground(view.getContext().getDrawable(R.drawable.disselectback));
+                    onGifclickedListner.onGifclicked(recentsubgifdataArrayList.get(position) ,settingSesson,2);
+                }
+
+            }
+
+            @Override
+            public void onItemLongClick(View view, int position) {
+
+            }
+        }));
+        historyviewmodel.getmAllRecentGifs().observeForever( gifEntities ->{
+            if(gifEntities.isEmpty())
+                return;
+            recentsubgifdataArrayList.clear();
+            for(int i=0;i<gifEntities.size();i++)
+            {
+
+                try {
+                    JSONObject obejct = new JSONObject(gifEntities.get(i).gifjson);
+                    Log.e("gifs" , "saved"+obejct.toString());
+                    recentsubgifdataArrayList.add(new Gifdata(obejct.getString("multiline_text") ,obejct.getString("gif")
+                            ,obejct.getString("thumbnail_gif") ,obejct.getString("youtube_url") , false));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                recentgifgridviewadapter = new Gifgridviewadapter(recentsubgifdataArrayList, mContext,"0");
+                recentgifrec.setAdapter(recentgifgridviewadapter);
+                recentgifgridviewadapter.notifyDataSetChanged();
+            }
+
+
+
+//            usershisatories.clear();
+//            Log.e("Got" , "words :"+words.get(0).getTitle());
+//            usershisatories.addAll(gifEntities);
+//            historyadapter = new Historyadapter(usershisatories ,getApplication() ,userDao ,historyClicked);
+//            historyrecs.setAdapter(historyadapter);
+//            historyadapter.notifyDataSetChanged();
+        });
+        recent_gfs.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                Toast.makeText(mContext, "recent found", Toast.LENGTH_SHORT).show();
+                gifgridlay.setVisibility(View.GONE);
+                recentgifrec.setVisibility(View.VISIBLE);
+                return false;
+            }
+        });
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -153,17 +238,14 @@ public class Gifgridviewpopup extends PopupWindow {
 //                gifviewpagli.setVisibility(View.VISIBLE);
 //            }
 //        });
-        ///+++++++++++++++++++++++++++++++++++++++++++Gif made++++++++++++++++++++++++++++++++++++++++++++++
-        categoriesrec = (RecyclerView) view.findViewById(R.id.categoriesrec);
-        subcatrec = (RecyclerView) view.findViewById(R.id.subcatrec);
-        progresbarfull = (ProgressBar) view.findViewById(R.id.progresbarfull);
+
         Log.e("searchtext" ,""+searchtext);
         if(searchtext.equals(""))
         {
             makeCategories(view.getContext());
+
 //            getSubcategorieswithString("all" , mContext);
         }else {
-            makeCategories(view.getContext());
             getSubcategorieswithString(searchtext , mContext);
         }
 
@@ -179,12 +261,17 @@ public class Gifgridviewpopup extends PopupWindow {
     }
 
     private void getSubcategorieswithString(String searchtext, Context mContext) {
+        progresbarfull.setVisibility(View.VISIBLE);
+        progresbarfulli.setVisibility(View.VISIBLE);
+        progresbarfull.animate();
+        progresbarfull.setIndeterminate(true);
         settingSesson = new SettingSesson(mContext);
 //        String subcaturl ="https://d9.technikh.com/index.php/api/v1/gif/search/"+searchtext;
         String subcaturl ="https://d9.technikh.com/index.php/api/v1/gif/search/mov?"+searchtext;
-        progresbarfull.setVisibility(View.VISIBLE);
-        progresbarfull.animate();
-        progresbarfull.setIndeterminate(true);
+//        progresbarfulli.setVisibility(View.VISIBLE);
+//        progresbarfull.setVisibility(View.VISIBLE);
+//        progresbarfull.animate();
+//        progresbarfull.setIndeterminate(true);
         RequestQueue queue = Volley.newRequestQueue(this.mContext);
         String selectedlang= "";
         String selectesearchendwith= "";
@@ -217,7 +304,7 @@ public class Gifgridviewpopup extends PopupWindow {
                     if(response.getJSONArray("items").length() ==0)
                     {
                         Toast.makeText(mContext, "No data found with " +searchtext, Toast.LENGTH_SHORT).show();
-                        progresbarfull.setVisibility(View.GONE);
+
                         return;
                     }
                     for(int i =0 ;i < response.getJSONArray("items").length();i++)
@@ -225,6 +312,8 @@ public class Gifgridviewpopup extends PopupWindow {
                         JSONObject obejct = response.getJSONArray("items").getJSONObject(i);
                         subgifdataArrayList.add(new Gifdata(obejct.getString("multiline_text") ,obejct.getString("gif")
                                 ,obejct.getString("thumbnail_gif") ,obejct.getString("youtube_url") , false));
+
+
                     }
                 }catch (Exception e)
                 {
@@ -233,6 +322,8 @@ public class Gifgridviewpopup extends PopupWindow {
                 gifgridviewadapter = new Gifgridviewadapter(subgifdataArrayList, mContext,"0");
                 gifgridlay.setAdapter(gifgridviewadapter);
                 gifgridviewadapter.notifyDataSetChanged();
+
+                makeCategories(mContext);
                 progresbarfull.setVisibility(View.GONE);
             }
         }, new Response.ErrorListener() {
@@ -248,10 +339,7 @@ public class Gifgridviewpopup extends PopupWindow {
         queue.add(subcatjsonObjectRequest);
     }
 
-    private void makeTempGifs() {
-//        gifdataArrayList.add(new Gifdata(R.raw.gg ,"gg" ,"local"));
-//        gifdataArrayList.add(new Gifdata(R.raw.blast ,"blast" ,"local"));
-    }
+
     /**
      * Set the listener for the event when any of the emojicon is clicked
      */
@@ -260,9 +348,10 @@ public class Gifgridviewpopup extends PopupWindow {
     }
     private void makeCategories(Context context) {
         progresbarfull.setVisibility(View.VISIBLE);
+        progresbarfulli.setVisibility(View.VISIBLE);
         progresbarfull.animate();
         progresbarfull.setIndeterminate(true);
-
+        Log.e("Serch text" , "is"+searchtext);
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(context);
         String caturl ="https://d9.technikh.com/index.php/api/v1/gif/categories";
@@ -272,7 +361,8 @@ public class Gifgridviewpopup extends PopupWindow {
         JsonArrayRequest catjsonArrayRequest = new JsonArrayRequest(caturl, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-//                Log.e("volley" , "response"+response.toString());
+
+                Log.e("volley" , "response"+response.toString());
 
                 for(int i=0 ;i<response.length() ;i++)
                 {
@@ -282,71 +372,36 @@ public class Gifgridviewpopup extends PopupWindow {
                         String category_id = jsonObject.getString("category-id");
 //                        Type listsubType = new TypeToken<ArrayList<Sub_catitemModel>>(){}.getType();
                         ArrayList<Sub_catitemModel> allsubcategories = new ArrayList<>();
+                        categoriesmodelArrayList.add(new Categoriesmodel(catname , category_id, allsubcategories ,false));
                         for(int ip = 0;ip<jsonObject.getJSONArray("sub-category-items").length();ip++)
                         {
 
                             JSONObject subobject = jsonObject.getJSONArray("sub-category-items").getJSONObject(ip);
-                            Log.e("sub-category" , "items"+subobject.getString("sub-category"));
-                            allsubcategories.add(new Sub_catitemModel(subobject.getString("sub-category") , subobject.getString("sub-category-id") ,false));
+                            Log.e("category" , "items"+catname);
+                            if(ip==0)
+                            {
+                                allsubcategories.add(new Sub_catitemModel(subobject.getString("sub-category") , subobject.getString("sub-category-id") ,true));
+                            }else {
+                                allsubcategories.add(new Sub_catitemModel(subobject.getString("sub-category") , subobject.getString("sub-category-id") ,false));
+                            }
+
                         }
 
 //                        Log.e("getSub_catitemModels" , ""+allsubcategories.get(0).getSubcategory());
-                        categoriesmodelArrayList.add(new Categoriesmodel(catname , category_id, allsubcategories ,false));
+
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
-//                    categoriesmodelArrayList.add(new Categoriesmodel("Recent" , "1"));
 
                 }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//                    categoriesmodelArrayList= (ArrayList<Categoriesmodel>) categoriesmodelArrayList.stream().filter(distinctByKey(cust -> cust.))
-                    categoriesmodelArrayList = (ArrayList<Categoriesmodel>)  categoriesmodelArrayList.stream()
-                            .map(ItemWrapper::new)
-                            .distinct()
-                            .map(wrapper -> wrapper.item)
-                            .collect(Collectors.toList());
-
-
-                }
-                categoriesrec.setLayoutManager(new LinearLayoutManager(mContext , LinearLayoutManager.HORIZONTAL, false));
-                categoriesAdapter = new CategoriesAdapter( categoriesmodelArrayList, mContext ,"0" );
-
-                categoriesrec.setAdapter(categoriesAdapter);
-                //++++++++++++++++If empty+++++++++++++++++++++++++++++++++++++++++++++++++++++
-                if(subcategoriesmodelArrayList.isEmpty() && searchtext.equals(""))
-                {
-                    subcatrec.setLayoutManager(new LinearLayoutManager(mContext , LinearLayoutManager.HORIZONTAL, false));
-                    int siex = categoriesmodelArrayList.get(0).getSub_catitemModels().size();
-
-                    for ( Sub_catitemModel sub_catitemModel:categoriesmodelArrayList.get(0).getSub_catitemModels()) {
-//                        Log.e("getSubcategory" , ""+sub_catitemModel.getSubcategory());
-                        subcategoriesmodelArrayList.add(new Sub_catitemModel(sub_catitemModel.getSubcategory() , sub_catitemModel.getSubcategoryid(),false));
-                    }
-//                        subcategoriesmodelArrayList.addAll(categoriesmodelArrayList.get(position).sub_catitemModels);
-                    subcatadapter = new Subcatadapter( subcategoriesmodelArrayList, mContext ,"0" );
-                    subcatrec.setAdapter(subcatadapter);
-                    subcatrec.addOnItemTouchListener(new RecyclerItemClickListener(mContext, subcatrec, new RecyclerItemClickListener.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            getSubcategories(subcategoriesmodelArrayList.get(position).getSubcategoryid() ,mContext);
-                            LinearLayout subcattopli = view.findViewById(R.id.toplicat);
-                        }
-
-                        @Override
-                        public void onItemLongClick(View view, int position) {
-
-                        }
-                    }));
-                        getSubcategories(subcategoriesmodelArrayList.get(0).getSubcategoryid() ,mContext);
-                }
-
                 //++++++++++++++++++++++
                 categoriesrec.addOnItemTouchListener(new RecyclerItemClickListener(mContext ,categoriesrec ,new RecyclerItemClickListener.OnItemClickListener(){
 
                     @Override
                     public void onItemClick(View view, int position) {
+
                         subcategoriesmodelArrayList.clear();
                         LinearLayout topli = view.findViewById(R.id.toplicat);
                         subcatrec.setLayoutManager(new LinearLayoutManager(mContext , LinearLayoutManager.HORIZONTAL, false));
@@ -358,13 +413,16 @@ public class Gifgridviewpopup extends PopupWindow {
                         }
 //                        subcategoriesmodelArrayList.addAll(categoriesmodelArrayList.get(position).sub_catitemModels);
                         subcatadapter = new Subcatadapter( subcategoriesmodelArrayList, mContext ,"0" );
+                        subcategoriesmodelArrayList.get(0).setSelectedornot(true);
                         subcatrec.setAdapter(subcatadapter);
+                        subcatadapter.notifyItemChanged(0);
                         subcatrec.addOnItemTouchListener(new RecyclerItemClickListener(mContext, subcatrec, new RecyclerItemClickListener.OnItemClickListener() {
                             @Override
                             public void onItemClick(View view, int position) {
-
-                                getSubcategories(subcategoriesmodelArrayList.get(position).getSubcategoryid() ,mContext);
-                                LinearLayout subcattopli = view.findViewById(R.id.toplicat);
+                                gifgridlay.setVisibility(View.VISIBLE);
+                                recentgifrec.setVisibility(View.GONE);
+                                getSubcategories(subcategoriesmodelArrayList.get(position).getSubcategoryid() ,mContext, 1);
+//                                LinearLayout subcattopli = view.findViewById(R.id.toplicat);
 
                             }
 
@@ -373,8 +431,9 @@ public class Gifgridviewpopup extends PopupWindow {
 
                             }
                         }));
+                        getSubcategories(subcategoriesmodelArrayList.get(position).getSubcategoryid() ,mContext, 1);
 //                        getSubcategories(categoriesmodelArrayList.get(position).getSubcategoryid() ,mContext);
-                        progresbarfull.setVisibility(View.GONE);
+
                         if(!categoriesmodelArrayList.get(position).isSelectedornot())
                         {
                             for(int i=0 ;i<categoriesmodelArrayList.size();i++)
@@ -391,6 +450,8 @@ public class Gifgridviewpopup extends PopupWindow {
                             topli.setBackground(view.getContext().getDrawable(R.drawable.disselectback));
 
                         }
+//                        categoriesmodelArrayList.get(0).setSelectedornot(true);
+                        categoriesAdapter.notifyDataSetChanged();
 
                     }
 
@@ -400,7 +461,71 @@ public class Gifgridviewpopup extends PopupWindow {
                     }
                 }));
 
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 
+                    List<Categoriesmodel> deduped = categoriesmodelArrayList.stream().distinct().collect(Collectors.toList());
+                    categoriesmodelArrayList.addAll(deduped);
+                }else {
+                    List<Categoriesmodel> deDupStringList = new ArrayList<Categoriesmodel>(new HashSet<>(categoriesmodelArrayList));
+                    categoriesmodelArrayList.addAll(deDupStringList);
+                }
+                categoriesrec.setLayoutManager(new LinearLayoutManager(mContext , LinearLayoutManager.HORIZONTAL, false));
+                categoriesAdapter = new CategoriesAdapter( categoriesmodelArrayList, mContext ,"0" );
+                categoriesrec.setAdapter(categoriesAdapter);
+                categoriesmodelArrayList.get(0).setSelectedornot(true);
+                categoriesAdapter.notifyDataSetChanged();
+                //++++++++++++++++If empty+++++++++++++++++++++++++++++++++++++++++++++++++++++
+                if(subcategoriesmodelArrayList.isEmpty() && searchtext.equals(""))
+                {
+                    subcatrec.setLayoutManager(new LinearLayoutManager(mContext , LinearLayoutManager.HORIZONTAL, false));
+                    int siex = categoriesmodelArrayList.get(0).getSub_catitemModels().size();
+
+                    for ( Sub_catitemModel sub_catitemModel:categoriesmodelArrayList.get(0).getSub_catitemModels()) {
+//                        Log.e("getSubcategory" , ""+sub_catitemModel.getSubcategory());
+                        subcategoriesmodelArrayList.add(new Sub_catitemModel(sub_catitemModel.getSubcategory() , sub_catitemModel.getSubcategoryid(),false));
+                    }
+//                        subcategoriesmodelArrayList.addAll(categoriesmodelArrayList.get(position).sub_catitemModels);
+                    subcatadapter = new Subcatadapter( subcategoriesmodelArrayList, mContext ,"0" );
+                    subcatrec.setAdapter(subcatadapter);
+
+                    subcatrec.addOnItemTouchListener(new RecyclerItemClickListener(mContext, subcatrec, new RecyclerItemClickListener.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(View view, int position) {
+                            gifgridlay.setVisibility(View.VISIBLE);
+                            recentgifrec.setVisibility(View.GONE);
+                            getSubcategories(subcategoriesmodelArrayList.get(position).getSubcategoryid() ,mContext ,1 );
+                            LinearLayout subcattopli = view.findViewById(R.id.toplicat);
+                        }
+
+                        @Override
+                        public void onItemLongClick(View view, int position) {
+
+                        }
+                    }));
+
+                }
+
+                if(!subcategoriesmodelArrayList.isEmpty())
+                {
+                    subcategoriesmodelArrayList.get(0).setSelectedornot(true);
+                    subcatadapter.notifyItemChanged(0);
+                    try{
+                        Log.e("subcategoriesmodel" ,""+ subcategoriesmodelArrayList.toString());
+                        getSubcategories(subcategoriesmodelArrayList.get(0).getSubcategoryid() ,mContext, 1);
+                    }catch (Exception E )
+                    {
+                        Toast.makeText(mContext, "Can't find any subcategory showing default", Toast.LENGTH_SHORT).show();
+
+                        E.printStackTrace();
+                    }
+                }
+
+//                if(!subcategoriesmodelArrayList.isEmpty())
+//                {
+//                    Toast.makeText(mContext, "No sub categories found", Toast.LENGTH_SHORT).show();
+//
+//                }
+                progresbarfull.setVisibility(View.GONE);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -417,25 +542,46 @@ public class Gifgridviewpopup extends PopupWindow {
 
     }
 
-    private void getSubcategories(String subcategoryid, Context mContext) {
+    private void getSubcategories(String subcategoryid, Context mContext, int pagenumber) {
+        Log.e("page" , "number"+pagenumber+"with"+subcategoryid);
         progresbarfull.setVisibility(View.VISIBLE);
+        progresbarfulli.setVisibility(View.VISIBLE);
         progresbarfull.animate();
         progresbarfull.setIndeterminate(true);
+      SettingSesson settingSesson =  new SettingSesson(mContext);
+//      SettingSesson settingSesson =   settingSesson.getSlelectedlang().toString();
         RequestQueue queue = Volley.newRequestQueue(mContext);
-        String subcaturl ="https://d9.technikh.com/index.php/api/v1/gif/search/all?sub-category-id="+subcategoryid;
-        subgifdataArrayList.clear();
+        String subcaturl ="https://d9.technikh.com/index.php/api/v1/gif/search/all?sub-category-id="+subcategoryid+"&languages="+settingSesson.getSlelectedlang().toString()+"&current_page="+pagenumber;
+      if(pagenumber ==1)
+      {
+          subgifdataArrayList.clear();
+      }
+
 // Request a string response from the provided URL.
         JsonObjectRequest subcatjsonObjectRequest = new JsonObjectRequest(subcaturl, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+
 //                Log.e("Response" , "for gifs"+response.toString());
                 try{
+                    progresbarfull.setVisibility(View.VISIBLE);
+                    progresbarfulli.setVisibility(View.VISIBLE);
                     for(int i =0 ;i < response.getJSONArray("items").length();i++)
                     {
+
                         JSONObject obejct = response.getJSONArray("items").getJSONObject(i);
-                        subgifdataArrayList.add(new Gifdata(obejct.getString("multiline_text") ,obejct.getString("gif")
-                        ,obejct.getString("thumbnail_gif") ,obejct.getString("youtube_url") , false));
+                        if( i ==0)
+                        {
+                            Log.e("getSubcategories" , "subcaturl for gifs"+obejct.toString());
+                            subgifdataArrayList.add(new Gifdata(obejct.getString("multiline_text") ,obejct.getString("gif")
+                                    ,obejct.getString("thumbnail_gif") ,obejct.getString("youtube_url") , true));
+                        }else {
+                            subgifdataArrayList.add(new Gifdata(obejct.getString("multiline_text") ,obejct.getString("gif")
+                                    ,obejct.getString("thumbnail_gif") ,obejct.getString("youtube_url") , false));
+                        }
+
                     }
+                    progresbarfull.setVisibility(View.GONE);
                 }catch (Exception e)
                 {
                     e.printStackTrace();
@@ -443,7 +589,30 @@ public class Gifgridviewpopup extends PopupWindow {
                 gifgridviewadapter = new Gifgridviewadapter(subgifdataArrayList,mContext,"0");
                 gifgridlay.setAdapter(gifgridviewadapter);
                 gifgridviewadapter.notifyDataSetChanged();
+                progresbarfull.setVisibility(View.VISIBLE);
+                gifgridlay.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                        super.onScrollStateChanged(recyclerView, newState);
+
+                        if (!recyclerView.canScrollVertically(1)) {
+//                            Toast.makeText(mContext, "Last", Toast.LENGTH_LONG).show();
+                            if(processisnotdone ==0)
+                            {
+                                processisnotdone =1;
+                                getSubcategories( subcategoryid,  mContext,  pagenumber +1);
+                            }else {
+                                processisnotdone =1;
+                                Log.e("Plaeas" ,"wait");
+                            }
+
+                        }
+                    }
+                });
+
+                processisnotdone = 0;
                 progresbarfull.setVisibility(View.GONE);
+                progresbarfulli.setVisibility(View.GONE);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -453,6 +622,8 @@ public class Gifgridviewpopup extends PopupWindow {
                 Log.e("volley" , "error"+error.getMessage());
                 Log.e("volley" , "error"+error.getCause());
                 progresbarfull.setVisibility(View.GONE);
+                progresbarfulli.setVisibility(View.GONE);
+                processisnotdone = 0;
             }
         });
 // Add the request to the RequestQueue.
@@ -538,7 +709,7 @@ public class Gifgridviewpopup extends PopupWindow {
     }
 
     public interface onGifclickedListner {
-        void onGifclicked(Gifdata gifitem, SettingSesson settingSesson);
+        void onGifclicked(Gifdata gifitem, SettingSesson settingSesson ,int place);
     }
 
 }

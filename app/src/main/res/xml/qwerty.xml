@@ -85,6 +85,7 @@
         <Key
             android:keyEdgeFlags="right"
             android:keyLabel="l" />
+
     </Row>
 
     <Row>
