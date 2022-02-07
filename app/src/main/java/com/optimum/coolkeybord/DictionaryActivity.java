@@ -147,10 +147,17 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
                 settingSesson.setMinimumcharacters(minout_txt.getText().toString());
             }
         });
+
         youtubehcekc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 settingSesson.appendlinkyou(b);
+            }
+        });
+        appendtxttogif.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                settingSesson.appendgiflink(b);
             }
         });
 //        languageSpinner = findViewById(R.id.spinner);

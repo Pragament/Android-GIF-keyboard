@@ -1488,6 +1488,10 @@ public class SoftKeyboard extends InputMethodService
 
                                                 ic.commitText(gifitem.getYoutubeUrl()  ,15);
                                                 ic.finishComposingText();
+                                            }else  if(sessionsxgiflink)
+                                            {
+                                                ic.commitText(gifitem.getMultilineText()  ,15);
+                                                ic.finishComposingText();
                                             }
 
                                             Log.e("It is " , "Gif supported");

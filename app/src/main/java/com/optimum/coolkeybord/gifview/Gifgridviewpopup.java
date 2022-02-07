@@ -61,7 +61,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import github.ankushsachdeva.emojicon.EmojiconsPopup;
+//import github.ankushsachdeva.emojicon.EmojiconsPopup;
 import timber.log.Timber;
 
 public class Gifgridviewpopup extends PopupWindow {
@@ -94,7 +94,7 @@ public class Gifgridviewpopup extends PopupWindow {
     private int keyBoardHeight = 0;
     private Boolean pendingOpen = false;
     Historyviewmodel historyviewmodel;
-    EmojiconsPopup.OnSoftKeyboardOpenCloseListener onSoftKeyboardOpenCloseListener;
+//    EmojiconsPopup.OnSoftKeyboardOpenCloseListener onSoftKeyboardOpenCloseListener;
     private onGifclickedListner onGifclickedListner;
     private onGifclickedListner onGifclickedListner2;
     private int processisnotdone = 0;
@@ -112,7 +112,7 @@ public class Gifgridviewpopup extends PopupWindow {
         setContentView(customView);
 
         setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        setSize((int) mContext.getResources().getDimension(github.ankushsachdeva.emojicon.R.dimen.keyboard_height), WindowManager.LayoutParams.MATCH_PARENT);
+        setSize((int) mContext.getResources().getDimension(R.dimen.keyboard_height), WindowManager.LayoutParams.MATCH_PARENT);
 
         //default size
 //        setSize((int) mContext.getResources().getDimension(github.ankushsachdeva.emojicon.R.dimen.keyboard_height), WindowManager.LayoutParams.MATCH_PARENT);
@@ -274,7 +274,7 @@ public class Gifgridviewpopup extends PopupWindow {
         }
 
 //         Hide Emoticons with keyboard icon.
-        view.findViewById(github.ankushsachdeva.emojicon.R.id.emojis_keyboard_image).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.emojis_keyboard_image).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismiss();
@@ -682,8 +682,8 @@ public class Gifgridviewpopup extends PopupWindow {
                     keyBoardHeight = heightDifference;
                     setSize(WindowManager.LayoutParams.MATCH_PARENT, keyBoardHeight);
                     if(isOpened == false){
-                        if(onSoftKeyboardOpenCloseListener!=null)
-                            onSoftKeyboardOpenCloseListener.onKeyboardOpen(keyBoardHeight);
+//                        if(onSoftKeyboardOpenCloseListener!=null)
+//                            onSoftKeyboardOpenCloseListener.onKeyboardOpen(keyBoardHeight);
                     }
                     isOpened = true;
                     if(pendingOpen){
@@ -693,8 +693,8 @@ public class Gifgridviewpopup extends PopupWindow {
                 }
                 else{
                     isOpened = false;
-                    if(onSoftKeyboardOpenCloseListener!=null)
-                        onSoftKeyboardOpenCloseListener.onKeyboardClose();
+//                    if(onSoftKeyboardOpenCloseListener!=null)
+//                        onSoftKeyboardOpenCloseListener.onKeyboardClose();
                 }
             }
         });
@@ -726,9 +726,9 @@ public class Gifgridviewpopup extends PopupWindow {
     /**
      * Set the listener for the event of keyboard opening or closing.
      */
-    public void setOnSoftKeyboardOpenCloseListener(EmojiconsPopup.OnSoftKeyboardOpenCloseListener listener){
-        this.onSoftKeyboardOpenCloseListener = listener;
-    }
+//    public void setOnSoftKeyboardOpenCloseListener(EmojiconsPopup.OnSoftKeyboardOpenCloseListener listener){
+//        this.onSoftKeyboardOpenCloseListener = listener;
+//    }
     public void showAtBottom(){
         showAtLocation(rootView, Gravity.BOTTOM, 0, 0);
     }

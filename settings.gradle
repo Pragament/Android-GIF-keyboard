@@ -13,4 +13,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "CoolKeybord"
 include ':app'
-include ':emoji'
+//include ':emoji'
