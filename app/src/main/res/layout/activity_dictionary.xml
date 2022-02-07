@@ -33,21 +33,44 @@
                 app:cardUseCompatPadding="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <CheckBox
-                    android:onClick="onClick"
-                    android:layout_gravity="center_horizontal"
-                    android:button="@null"
-                    android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
-                    android:textColor="@color/black"
-                    android:textAlignment="center"
-                    android:textSize="18sp"
-                    android:text="@string/append_link_to_youtube_video_if_available"
-                    android:id="@+id/youtubehcekc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    >
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <CheckBox
 
-                </CheckBox>
+                        android:onClick="onClick"
+                        android:layout_gravity="center_horizontal"
+                        android:button="@null"
+                        android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:text="@string/append_link_to_youtube_video_if_available"
+                        android:id="@+id/youtubehcekc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        >
+
+                    </CheckBox>
+                    <CheckBox
+
+                        android:onClick="onClick"
+                        android:layout_gravity="center_horizontal"
+                        android:button="@null"
+                        android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:text="Append text to GIF"
+                        android:id="@+id/appendtxttogif"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        >
+
+                    </CheckBox>
+
+                </LinearLayout>
 
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView

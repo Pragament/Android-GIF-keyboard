@@ -44,6 +44,7 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
     private RadioButton searchbystart;
     private RadioButton searchbycontains;
     private CheckBox youtubehcekc;
+    private CheckBox appendtxttogif;
 //    EditText searchEditText;
 //    Spinner languageSpinner;
 //    ArrayList<String> languages, words;
@@ -67,6 +68,7 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
         showtel_ch = findViewById(R.id.showtel_ch);
         showtamil_ch = findViewById(R.id.showtamil_ch);
         youtubehcekc = findViewById(R.id.youtubehcekc);
+        appendtxttogif = findViewById(R.id.appendtxttogif);
 
         increase_char = findViewById(R.id.increase_char);
         minout_txt = findViewById(R.id.minout_txt);
@@ -82,6 +84,7 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
             searchbycontains.setChecked(true);
         }
         youtubehcekc.setChecked(settingSesson.getAppendlink());
+        appendtxttogif.setChecked(settingSesson.getgiflink());
         minout_txt.setText(String.valueOf(Integer.parseInt(settingSesson.getMinimumcharacters())));
         settingSesson.setMinimumcharacters(minout_txt.getText().toString());
         starconrd.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {

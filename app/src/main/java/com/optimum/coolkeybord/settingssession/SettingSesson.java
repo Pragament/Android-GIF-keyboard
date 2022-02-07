@@ -11,6 +11,7 @@ public class SettingSesson {
     private static final String Pref_Name="Settingfile";
     private static final String Pref_Name1="Orderfile";
     private static final String Appendlink="appendlinkyou";
+    private static final String Appendgiflink="appendgiflink";
     private static final String SearchbyStartsEnd="searchbystarts";
     private static final String SearchbyEnd="searchbyend";
     private static final String Minimumcharacters="minimumcharacters";
@@ -30,6 +31,10 @@ public class SettingSesson {
 
     public boolean getAppendlink() {
         return pref.getBoolean(Appendlink, false);
+//        return Appendlink;
+    }
+    public boolean getgiflink() {
+        return pref.getBoolean(Appendgiflink, false);
 //        return Appendlink;
     }
 
@@ -114,6 +119,13 @@ public class SettingSesson {
     public void appendlinkyou(Boolean is_il)
     {
         editor.putBoolean(Appendlink, is_il);
+
+        // commit changes
+        editor.commit();
+    }
+    public void appendgiflink(Boolean is_il)
+    {
+        editor.putBoolean(Appendgiflink, is_il);
 
         // commit changes
         editor.commit();

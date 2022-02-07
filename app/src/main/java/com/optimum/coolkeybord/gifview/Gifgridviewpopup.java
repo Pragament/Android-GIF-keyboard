@@ -54,6 +54,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -185,18 +186,41 @@ public class Gifgridviewpopup extends PopupWindow {
             if(gifEntities.isEmpty())
                 return;
             recentsubgifdataArrayList.clear();
+            JSONObject firstgif = null;
             for(int i=0;i<gifEntities.size();i++)
             {
 
                 try {
-                    JSONObject obejct = new JSONObject(gifEntities.get(i).gifjson);
-                    Log.e("gifs" , "saved"+obejct.toString());
-                    recentsubgifdataArrayList.add(new Gifdata(obejct.getString("multiline_text") ,obejct.getString("gif")
-                            ,obejct.getString("thumbnail_gif") ,obejct.getString("youtube_url") , false));
+                    JSONObject obejct   = new JSONObject(gifEntities.get(i).gifjson);
+                    Log.w("gifs" , "saved"+obejct.getString("gif"));
+                if( i==0){
+//                        Log.e("gifs" , "saved"+obejct.toString());
+                        recentsubgifdataArrayList.add(new Gifdata(obejct.getString("multiline_text") ,obejct.getString("gif")
+                                ,obejct.getString("thumbnail_gif") ,obejct.getString("youtube_url") , false));
+                         firstgif = obejct;
 
+
+                }
+                else {
+                    try {
+                        if(!(firstgif.getString("gif").equals(obejct.getString("gif"))))
+
+                        {
+                            recentsubgifdataArrayList.add(new Gifdata(obejct.getString("multiline_text") ,obejct.getString("gif")
+                                    ,obejct.getString("thumbnail_gif") ,obejct.getString("youtube_url") , false));
+                        }else {
+                            firstgif = obejct;
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                Set<Gifdata> set = new HashSet<Gifdata>(recentsubgifdataArrayList);
+                recentsubgifdataArrayList.clear();
+                recentsubgifdataArrayList.addAll(set);
                 recentgifgridviewadapter = new Gifgridviewadapter(recentsubgifdataArrayList, mContext,"0");
                 recentgifrec.setAdapter(recentgifgridviewadapter);
                 recentgifgridviewadapter.notifyDataSetChanged();
@@ -401,7 +425,8 @@ public class Gifgridviewpopup extends PopupWindow {
 
                     @Override
                     public void onItemClick(View view, int position) {
-
+                        gifgridlay.setVisibility(View.VISIBLE);
+                        recentgifrec.setVisibility(View.GONE);
                         subcategoriesmodelArrayList.clear();
                         LinearLayout topli = view.findViewById(R.id.toplicat);
                         subcatrec.setLayoutManager(new LinearLayoutManager(mContext , LinearLayoutManager.HORIZONTAL, false));

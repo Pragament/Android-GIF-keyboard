@@ -53,6 +53,7 @@ import androidx.core.content.FileProvider;
 import androidx.core.view.inputmethod.EditorInfoCompat;
 import androidx.core.view.inputmethod.InputConnectionCompat;
 import androidx.core.view.inputmethod.InputContentInfoCompat;
+import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -128,17 +129,18 @@ public class SoftKeyboard extends InputMethodService
     private long mMetaState;
     private String mWordSeparators;
     // Keyboards (not subtypes)
+    boolean gifSupported = false;
     private LatinKeyboard mQwertyKeyboard;
 //    private LatinKeyboard mFarsiKeyboard;
 //    private LatinKeyboard mPashtoKeyboard;
 //    private LatinKeyboard mPashtoLatinKeyboard;
 //    private LatinKeyboard mPashtoLatinShiftedKeyboard;
-    private LatinKeyboard mNumbersKeyboard;
+//    private LatinKeyboard mNumbersKeyboard;
 //    private LatinKeyboard mSymbolsKeyboard;
-    private LatinKeyboard mSymbolsShiftedKeyboard;
+//    private LatinKeyboard mSymbolsShiftedKeyboard;
 //    private LatinKeyboard mSymbolsAFKeyboard;
-    private LatinKeyboard mSymbolsShiftedAFKeyboard;
-    private LatinKeyboard mPhoneKeyboard;
+//    private LatinKeyboard mSymbolsShiftedAFKeyboard;
+//    private LatinKeyboard mPhoneKeyboard;
     private LatinKeyboard mCurKeyboard;
     public static String mActiveKeyboard;
 //    private EmojiconsPopup popupWindow = null;
@@ -225,15 +227,15 @@ public class SoftKeyboard extends InputMethodService
         settingSesson = new SettingSesson(this);
         mQwertyKeyboard = new LatinKeyboard(this, R.xml.qwerty);
 //        mSymbolsKeyboard = new LatinKeyboard(this, R.xml.symbols);
-        mSymbolsShiftedKeyboard = new LatinKeyboard(this, R.xml.symbols_shift);
+//        mSymbolsShiftedKeyboard = new LatinKeyboard(this, R.xml.symbols_shift);
 //        mFarsiKeyboard = new LatinKeyboard(this, R.xml.farsi);
 //        mPashtoKeyboard = new LatinKeyboard(this, R.xml.pashto);
 //        mPashtoLatinKeyboard = new LatinKeyboard(this, R.xml.pashto_latin);
 //        mPashtoLatinShiftedKeyboard = new LatinKeyboard(this, R.xml.pashto_latin_shift);
-        mNumbersKeyboard = new LatinKeyboard(this, R.xml.numbers);
+//        mNumbersKeyboard = new LatinKeyboard(this, R.xml.numbers);
 //        mSymbolsAFKeyboard = new LatinKeyboard(this, R.xml.symbols_af);
-        mSymbolsShiftedAFKeyboard = new LatinKeyboard(this, R.xml.symbols_shift_af);
-        mPhoneKeyboard = new LatinKeyboard(this, R.xml.phone);
+//        mSymbolsShiftedAFKeyboard = new LatinKeyboard(this, R.xml.symbols_shift_af);
+//        mPhoneKeyboard = new LatinKeyboard(this, R.xml.phone);
 
     }
 
@@ -286,6 +288,8 @@ public class SoftKeyboard extends InputMethodService
                     cancelimg.setVisibility(View.GONE);
                     searchimgdone.setVisibility(View.VISIBLE);
                 }
+//                searched.clearComposingText();
+//                searched.setText(s.toString());
                 searched.setSelection(searched.getText().length());
             }
 
@@ -482,6 +486,7 @@ public class SoftKeyboard extends InputMethodService
             default:
                 mActiveKeyboard = "en_US";
                 mCurKeyboard = mQwertyKeyboard;
+
         }
 
         return mCurKeyboard;
@@ -558,7 +563,7 @@ public class SoftKeyboard extends InputMethodService
         // text being edited.
         switch (attribute.inputType & InputType.TYPE_MASK_CLASS) {
             case InputType.TYPE_CLASS_NUMBER:
-                mCurKeyboard = mNumbersKeyboard;
+//                mCurKeyboard = mNumbersKeyboard;
                 break;
             case InputType.TYPE_CLASS_DATETIME:
                 // Numbers and dates default to the symbols keyboard, with
@@ -569,7 +574,7 @@ public class SoftKeyboard extends InputMethodService
             case InputType.TYPE_CLASS_PHONE:
                 // Phones will also default to the symbols keyboard, though
                 // often you will want to have a dedicated phone keyboard.
-                mCurKeyboard = mPhoneKeyboard;
+//                mCurKeyboard = mPhoneKeyboard;
                 break;
 
             case InputType.TYPE_CLASS_TEXT:
@@ -632,8 +637,26 @@ public class SoftKeyboard extends InputMethodService
             if(words.isEmpty())
                 return;
             usershisatories.clear();
+            Historymodal firstword = null;
 //            Log.e("Got" , "words :"+words.get(0).getTitle());
-            usershisatories.addAll(words);
+            for(int i =0;i<words.size() ;i++)
+            {
+                if( i==0)
+                {
+                     firstword = words.get(i);
+                    usershisatories.add(words.get(i));
+                }else {
+                    if(! (words.get(i).getTitle().equals(firstword.getTitle())) )
+                    {
+                        usershisatories.add(words.get(i));
+                        firstword = words.get(i);
+                    }
+
+                }
+
+            }
+//            usershisatories.addAll(words);
+
             historyadapter = new Historyadapter(usershisatories ,getApplication() ,userDao ,historyClicked);
             historyrecs.setAdapter(historyadapter);
             historyadapter.notifyDataSetChanged();
@@ -722,7 +745,7 @@ public class SoftKeyboard extends InputMethodService
         String[] mimeTypes = EditorInfoCompat.getContentMimeTypes(attribute);
 
 
-        boolean gifSupported = false;
+
         for (String mimeType : mimeTypes) {
             if (ClipDescription.compareMimeTypes(mimeType, "image/gif")) {
                 gifSupported = true;
@@ -1307,6 +1330,7 @@ public class SoftKeyboard extends InputMethodService
             if (mCandidateView != null) {
                 mCandidateView.clear();
             }
+
             updateShiftKeyState(getCurrentInputEditorInfo());
         } else if (mComposing.length() > 0) {
             // If we were generating candidate suggestions for the current
@@ -1408,9 +1432,38 @@ public class SoftKeyboard extends InputMethodService
                         settingSesson = new SettingSesson(gifpopupWindow.getContentView().getContext());
 //                    Log.e("A Gifdata" ,"Gif choosen "+gifitem.getMultilineText());
                         Boolean sessionsx = settingSesson.getAppendlink();
+                        Boolean sessionsxgiflink = settingSesson.getgiflink();
                         if(pos ==1)
                         {
                             SoftKeyboard.this.historyviewmodel.insertgif(new RecentGifEntity(new Gson().toJson(gifitem, Gifdata.class)));
+//                            List<RecentGifEntity> recentgif = historyviewmodel.getmAllRecentGifs().getValue();
+//                            try{
+//                                for( int i =0 ;i<recentgif.size();i++)
+//                                {
+//                                    Log.d("recentgif" , "id "+recentgif.get(i).id);
+//                                    Log.d("recentgif" , "id "+recentgif.get(i).gifjson);
+//                                }
+////                            Log.e("recentgif" , "id "+recentgif.get(0).id);
+////                            Log.e("recentgif" , "gifjson "+recentgif.get(0).gifjson);
+//                                if(recentgif.size() >0)
+//                                {
+//                                    if( !(recentgif.contains(new Gson().toJson(gifitem, Gifdata.class))) )
+//                                    {
+//                                        SoftKeyboard.this.historyviewmodel.insertgif(new RecentGifEntity(new Gson().toJson(gifitem, Gifdata.class)));
+//                                    }else {
+//                                        Toast.makeText(SoftKeyboard.this, "Already has this", Toast.LENGTH_SHORT).show();
+//                                    }
+//                                }else {
+//                                    SoftKeyboard.this.historyviewmodel.insertgif(new RecentGifEntity(new Gson().toJson(gifitem, Gifdata.class)));
+//                                }
+//
+//
+//                            }catch (Exception e)
+//                            {
+//                                SoftKeyboard.this.historyviewmodel.insertgif(new RecentGifEntity(new Gson().toJson(gifitem, Gifdata.class)));
+//                                e.printStackTrace();
+//                            }
+
                         }
 
                         Log.e("settingSesson Gifdata" ,"Gif getAppendlink "+sessionsx);
@@ -1421,15 +1474,28 @@ public class SoftKeyboard extends InputMethodService
                                     @Override
                                     public void onResourceReady(@NonNull GifDrawable gifDrawable, @Nullable Transition<? super GifDrawable> transition) {
                                         InputConnection ic = getCurrentInputConnection();
-                                        if(sessionsx)
-                                        {
-                                            ic.commitText(gifitem.getYoutubeUrl() +"\n "+gifitem.getMultilineText() ,15);
-                                            ic.finishComposingText();
-                                        }else {
-                                            ic.commitText(gifitem.getMultilineText() ,15);
+                                        String[] mimeTypes = EditorInfoCompat.getContentMimeTypes(getCurrentInputEditorInfo());
+                                        boolean localgifSupported = false;
+                                        for (String mimeType : mimeTypes) {
+                                            if (ClipDescription.compareMimeTypes(mimeType, "image/gif")) {
+                                                localgifSupported = true;
+
+                                            }
+                                        }
+                                        if (localgifSupported) {
+                                            if(sessionsx)
+                                            {
+
+                                                ic.commitText(gifitem.getYoutubeUrl()  ,15);
+                                                ic.finishComposingText();
+                                            }
+
+                                            Log.e("It is " , "Gif supported");
+                                        } else {
+                                            Log.e("It is " , "Gif NOT supported");
+                                            ic.commitText(gifitem.getYoutubeUrl() +"\n"+gifitem.getMultilineText() ,15);
                                             ic.finishComposingText();
                                         }
-
 //                                        mComposing.append(gifitem.getMultilineText());
 //                                        Log.e("Data"  , ""+ mComposing.toString());
 //                                        commitTyped(getCurrentInputConnection());
@@ -1546,45 +1612,22 @@ public class SoftKeyboard extends InputMethodService
      * @param context
      */
     public void addUpdateWord(Context context) {
+
         Log.e("Historymodal", "getLastWord()" + getLastWord());
 //        userDao.insert(new Historymodal( searched.getText().toString(), "S", "ww.gosdgf", 1));
+
         historyviewmodel.insert(new Historymodal( searched.getText().toString(), "S", "ww.gosdgf", 1));
 //        if (!getLastWord().isEmpty()) {
             AsyncTask.execute(new Runnable() {
                 @Override
                 public void run() {
                     Log.e("Historymodal", "getLastWord()" + searched.getText().toString());
-//            Integer freq = db.getWordFrequency(getLastWord(), mActiveKeyboard);
-//                    try{
-//                        historyDatabase = HistoryDatabase.getInstance(context);
-//                        userDao = historyDatabase.Dao();
-//                        if (userDao.getAllHistories().isEmpty()) {
-//
-//                            userDao.insert(new Historymodal( searched.getText().toString(), "S", "ww.gosdgf", 1));
-//                        }else {
-//                            Integer freq = userDao.getWordFrequency(searched.getText().toString());
-//                            Log.e("Historymodal", "freq" + freq);
-//                            if (freq != null) {
-//
-//                                userDao.update(new Historymodal( searched.getText().toString(), "S", "ww.gosdgf", (freq + 1)));
-//                            } else {
-//                                userDao.insert(new Historymodal( searched.getText().toString(), "S", "ww.gosdgf", 1));
-//                            }
-//                        }
-//
-//                    }catch (Exception e)
-//                    {
-//                        e.printStackTrace();
-//                    }
-
-//                    historyDatabase.close();
                 }
 
             });
 
 //        }
     }
-
     /**
      * Return a last word from input connection with space
      *
