@@ -1273,12 +1273,14 @@ public class SoftKeyboard extends InputMethodService
 //            getCurrentInputConnection().setComposingText(mComposing, 1);
 //            updateShiftKeyState(getCurrentInputEditorInfo());
 //            updateCandidates();
-        } else {
+        } else if(primaryCode == -14111123){
             //+++++++The code which commit text to the selected input++++++++
-            mComposing.append((char) primaryCode);
+            mComposing.append(" ");
 
 //            getCurrentInputConnection().setComposingText(mComposing, 1);
 
+        }else {
+            mComposing.append((char) primaryCode);
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++searched edit text+++++++++++++++++++++++++++++++++
         searched.setText(mComposing.toString());
@@ -1402,6 +1404,9 @@ public class SoftKeyboard extends InputMethodService
 
             }
 
+        }else if(primaryCode == -14111123)
+        {
+            searched.setText(searched.getText().toString()+" ");
         }
     }
 

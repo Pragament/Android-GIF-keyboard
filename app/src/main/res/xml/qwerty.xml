@@ -67,7 +67,7 @@
 
     <Row>
         <Key
-            android:horizontalGap="4%p"
+
             android:keyEdgeFlags="left"
             android:keyLabel="a"
 
@@ -85,7 +85,8 @@
         <Key
             android:keyEdgeFlags="right"
             android:keyLabel="l" />
-
+        <Key android:keyLabel="z" />
+        <Key android:keyLabel="x" />
     </Row>
 
     <Row>
@@ -96,14 +97,22 @@
 <!--            android:keyEdgeFlags="left"-->
 <!--            android:keyIcon="@drawable/ic_keyboard_capslock_24dp"-->
 <!--            android:keyWidth="15%p" />-->
-        <Key android:keyLabel="z" />
-        <Key android:keyLabel="x" />
+<!--        <Key android:keyLabel="" />-->
+<!--        <Key android:keyLabel="" />-->
+<!--        <Key android:keyLabel="" />-->
+
         <Key
             android:keyLabel="c"
 
             android:popupKeyboard="@xml/popup_keyboard" />
         <Key android:keyLabel="v" />
         <Key android:keyLabel="b" />
+        <Key
+            android:codes="-14111123"
+            android:isRepeatable="true"
+            android:keyEdgeFlags="right"
+            android:keyIcon="@drawable/ic_space_bar_white_24dp"
+            android:keyWidth="25%p" />
         <Key
             android:keyLabel="n"
 
@@ -115,6 +124,7 @@
             android:keyEdgeFlags="right"
             android:keyIcon="@drawable/ic_backspace_24dp"
             android:keyWidth="15%p" />
+
         <Key
 
             android:codes="10"
@@ -122,6 +132,7 @@
             android:keyIcon="@drawable/ic_next_circle_filled_45dp"
             android:keyWidth="15%p" />
     </Row>
+
 
 <!--    <Row android:rowEdgeFlags="bottom">-->
 <!--        <Key-->
