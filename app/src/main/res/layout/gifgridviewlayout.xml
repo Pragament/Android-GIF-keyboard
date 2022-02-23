@@ -62,11 +62,11 @@
                 android:background="@color/black">
 
                 <ImageView
-                    android:layout_centerVertical="true"
                     android:id="@+id/settings"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
                     android:layout_gravity="end"
 
                     android:layout_marginBottom="10dp"

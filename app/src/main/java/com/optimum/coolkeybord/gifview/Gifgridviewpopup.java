@@ -2,6 +2,7 @@ package com.optimum.coolkeybord.gifview;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -70,9 +71,11 @@ public class Gifgridviewpopup extends PopupWindow {
     private RecyclerView categoriesrec;
     private RecyclerView subcatrec;
     private ImageView backimgtogif;
+    private boolean slectdedhistoryicon = false;
     private RecyclerView gifgridlay;
     private RecyclerView recentgifrec;
     private LinearLayout lineartopli;
+    LinearLayout recent_gfs;
     //++++++++++++++++++++++++++++++Progress bar++++++++++++++++++++++
     private ProgressBar progresbarfull;
     private RelativeLayout progresbarfulli;
@@ -118,10 +121,11 @@ public class Gifgridviewpopup extends PopupWindow {
 //        setSize((int) mContext.getResources().getDimension(github.ankushsachdeva.emojicon.R.dimen.keyboard_height), WindowManager.LayoutParams.MATCH_PARENT);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private View createCustomView() {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.gifgridviewlayout, null, false);
-        LinearLayout recent_gfs = (LinearLayout) view.findViewById(R.id.recent_gfs);
+         recent_gfs = (LinearLayout) view.findViewById(R.id.recent_gfs);
         gifgridlay = (RecyclerView) view.findViewById(R.id.gridlay);
         recentgifrec = (RecyclerView) view.findViewById(R.id.recentgif);
         ///+++++++++++++++++++++++++++++++++++++++++++Gif made++++++++++++++++++++++++++++++++++++++++++++++
@@ -238,6 +242,27 @@ public class Gifgridviewpopup extends PopupWindow {
         recent_gfs.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+                if(!(categoriesmodelArrayList.isEmpty()))
+                {
+                    for(int i =0 ;i<categoriesmodelArrayList.size() ;i++)
+                    {
+                        categoriesmodelArrayList.get(i).setSelectedornot(false);
+                    }
+
+                    categoriesAdapter.notifyDataSetChanged();
+                }
+                if(!(subcategoriesmodelArrayList.isEmpty()))
+                {
+                    for(int i =0 ;i<subcategoriesmodelArrayList.size() ;i++)
+                    {
+                        subcategoriesmodelArrayList.get(i).setSelectedornot(false);
+                    }
+
+                    subcatadapter.notifyDataSetChanged();
+                }
+
+                recent_gfs.setBackground(view.getContext().getDrawable(R.drawable.selectedgif));
+
                 Toast.makeText(mContext, "recent found", Toast.LENGTH_SHORT).show();
                 gifgridlay.setVisibility(View.GONE);
                 recentgifrec.setVisibility(View.VISIBLE);
@@ -379,6 +404,7 @@ public class Gifgridviewpopup extends PopupWindow {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(context);
         String caturl ="https://d9.technikh.com/index.php/api/v1/gif/categories";
+
 //        String caturl ="https://d9.technikh.com/index.php/freelancer-sub-categories-api";
 
 // Request a string response from the provided URL.
@@ -427,6 +453,7 @@ public class Gifgridviewpopup extends PopupWindow {
                     public void onItemClick(View view, int position) {
                         gifgridlay.setVisibility(View.VISIBLE);
                         recentgifrec.setVisibility(View.GONE);
+                        recent_gfs.setBackground(context.getDrawable(R.drawable.disselectback));
                         subcategoriesmodelArrayList.clear();
                         LinearLayout topli = view.findViewById(R.id.toplicat);
                         subcatrec.setLayoutManager(new LinearLayoutManager(mContext , LinearLayoutManager.HORIZONTAL, false));
@@ -446,6 +473,7 @@ public class Gifgridviewpopup extends PopupWindow {
                             public void onItemClick(View view, int position) {
                                 gifgridlay.setVisibility(View.VISIBLE);
                                 recentgifrec.setVisibility(View.GONE);
+                                recent_gfs.setBackground(context.getDrawable(R.drawable.disselectback));
                                 getSubcategories(subcategoriesmodelArrayList.get(position).getSubcategoryid() ,mContext, 1);
 //                                LinearLayout subcattopli = view.findViewById(R.id.toplicat);
 
@@ -494,6 +522,7 @@ public class Gifgridviewpopup extends PopupWindow {
                     List<Categoriesmodel> deDupStringList = new ArrayList<Categoriesmodel>(new HashSet<>(categoriesmodelArrayList));
                     categoriesmodelArrayList.addAll(deDupStringList);
                 }
+
                 categoriesrec.setLayoutManager(new LinearLayoutManager(mContext , LinearLayoutManager.HORIZONTAL, false));
                 categoriesAdapter = new CategoriesAdapter( categoriesmodelArrayList, mContext ,"0" );
                 categoriesrec.setAdapter(categoriesAdapter);

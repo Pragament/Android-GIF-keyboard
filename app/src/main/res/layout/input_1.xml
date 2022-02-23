@@ -57,29 +57,30 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <FrameLayout
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <LinearLayout
+
+                        android:layout_gravity="center_vertical"
                         android:weightSum="1"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
                         <EditText
 
                             android:maxLines="1"
-                            android:maxLength="50"
-                            android:maxEms="50"
+
                             android:layout_weight="1"
                             android:visibility="invisible"
-                            android:paddingStart="10dp"
+
                             android:hint="Search gif sub or categories "
-                            android:background="@color/white"
 
                             android:id="@+id/searched"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            ></EditText>
+                            android:layout_height="match_parent"
+                            android:inputType="text"></EditText>
 
                     </LinearLayout>
 

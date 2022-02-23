@@ -95,13 +95,14 @@ public class SoftKeyboard extends InputMethodService
      * a QWERTY keyboard to Chinese), but may not be used for input methods
      * that are primarily intended to be used for on-screen text entry.
      */
-    private  int softkeyheight = 0;
+
     static final boolean PROCESS_HARD_KEYS = true;
     private InputMethodManager mInputMethodManager;
     private LatinKeyboardView mInputView;
     //++++For gif keybord+++++
     private LatinKeyboardView keyboardxxview;
     private EditText searched;
+
     private LinearLayout settingsimg;
     Historyadapter historyadapter;
     private RecyclerView historyrecs;
@@ -253,7 +254,7 @@ public class SoftKeyboard extends InputMethodService
          vx = (LinearLayout) getLayoutInflater().inflate(R.layout.input_1, null);
 //       View  vx = (LinearLayout) getLayoutInflater().inflate(THE_LAYOUTS[sharedPreferences.getInt(THEME_KEY, 0)], null);
         lineartopli = (LinearLayout) vx.findViewById(R.id.lineartopli);
-        searched = (EditText) vx.findViewById(R.id.searched);
+        searched =  vx.findViewById(R.id.searched);
         settingsimg = (LinearLayout) vx.findViewById(R.id.settingsimg);
         historyrecs = (RecyclerView) vx.findViewById(R.id.historyrecs);
         historyrecs.setLayoutManager(new LinearLayoutManager(vx.getContext() ,LinearLayoutManager.HORIZONTAL, false));
@@ -267,6 +268,7 @@ public class SoftKeyboard extends InputMethodService
         settingsimg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                getCurrentInputConnection().commitText("",1);
                 Intent intent = new Intent(view.getContext() ,DictionaryActivity.class);
                 intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
                 view.getContext().startActivity(intent);
@@ -288,9 +290,10 @@ public class SoftKeyboard extends InputMethodService
                     cancelimg.setVisibility(View.GONE);
                     searchimgdone.setVisibility(View.VISIBLE);
                 }
+
 //                searched.clearComposingText();
 //                searched.setText(s.toString());
-                searched.setSelection(searched.getText().length());
+//                searched.setSelection(searched.getText().length());
             }
 
             @Override
@@ -302,12 +305,22 @@ public class SoftKeyboard extends InputMethodService
             @Override
             public void onClick(View v) {
 //                onSearchDoneListner.onSearchDone(searched.getText().toString());
-                if(searched.getText().toString().equals(""))
+                int settingsize = Integer.parseInt(settingSesson.getMinimumcharacters());
+                int edtxtsize = searched.getText().toString().length();
+                Log.e("search" , "txt sizes settingsize"+settingsize+" edtxtsize" +edtxtsize);
+                if( settingsize  >  edtxtsize )
                 {
-                    showGifGridview("" ,historyviewmodel , 0, mInputView);
+                    Toast.makeText(SoftKeyboard.this, "Search word is smaller than from settings", Toast.LENGTH_SHORT).show();
+                    return;
                 }else {
                     showGifGridview(searched.getText().toString(), historyviewmodel ,1, mInputView);
                 }
+//                if(searched.getText().toString().equals(""))
+//                {
+//                    showGifGridview("" ,historyviewmodel , 0, mInputView);
+//                }else {
+//                    showGifGridview(searched.getText().toString(), historyviewmodel ,1, mInputView);
+//                }
                 addUpdateWord(v.getContext());
             }
         });
@@ -337,8 +350,8 @@ public class SoftKeyboard extends InputMethodService
             }
         });
         if(!settingSesson.getMinimumcharacters().equals("")){
-            searched.setMaxEms(Integer.parseInt(settingSesson.getMinimumcharacters()));
-            searched.setFilters(new InputFilter[] { new InputFilter.LengthFilter(Integer.parseInt(settingSesson.getMinimumcharacters())) });
+//            searched.setMaxEms(Integer.parseInt(settingSesson.getMinimumcharacters()));
+//            searched.setFilters(new InputFilter[] { new InputFilter.LengthFilter(Integer.parseInt(settingSesson.getMinimumcharacters())) });
         }
         mInputView.setOnKeyboardActionListener(this);
         keyboardxxview.setOnKeyboardActionListener(this);
@@ -382,7 +395,7 @@ public class SoftKeyboard extends InputMethodService
             // a temporary read access to the recipient application without exporting your content
             // provider.
             flag = InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION;
-          getCurrentInputConnection().performEditorAction(1);
+//          getCurrentInputConnection().performEditorAction(1);
         } else {
             // On API 24 and prior devices, we cannot rely on
             // InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION. You as an IME author
@@ -402,12 +415,13 @@ public class SoftKeyboard extends InputMethodService
 
         final InputContentInfoCompat inputContentInfoCompat = new InputContentInfoCompat(
                 contentUri,
-                new ClipDescription(description, new String[]{mimeType}),
+                new ClipDescription("xyz", new String[]{mimeType}),
                 null /* linkUrl */);
 
            InputConnectionCompat.commitContent(
                 getCurrentInputConnection(), getCurrentInputEditorInfo(), inputContentInfoCompat,
                 flag, null);
+//        getCurrentInputConnection().commitText("sdfsd",1);
     }
 
     private boolean validatePackageName(@Nullable EditorInfo editorInfo) {
@@ -749,7 +763,6 @@ public class SoftKeyboard extends InputMethodService
         for (String mimeType : mimeTypes) {
             if (ClipDescription.compareMimeTypes(mimeType, "image/gif")) {
                 gifSupported = true;
-
             }
         }
 
@@ -794,8 +807,7 @@ public class SoftKeyboard extends InputMethodService
      * Deal with the editor reporting movement of its cursor.
      */
     @Override
-    public void onUpdateSelection(int oldSelStart, int oldSelEnd,
-                                  int newSelStart, int newSelEnd,
+    public void onUpdateSelection(int oldSelStart, int oldSelEnd, int newSelStart, int newSelEnd,
                                   int candidatesStart, int candidatesEnd) {
         super.onUpdateSelection(oldSelStart, oldSelEnd, newSelStart, newSelEnd,
                 candidatesStart, candidatesEnd);
@@ -1154,7 +1166,7 @@ public class SoftKeyboard extends InputMethodService
         if (mComposing.length() > 0) {
             commitTyped(ic);
         }
-        ic.commitText(text, 0);
+//        ic.commitText(text, 0);
         ic.endBatchEdit();
         updateShiftKeyState(getCurrentInputEditorInfo());
     }
@@ -1474,6 +1486,7 @@ public class SoftKeyboard extends InputMethodService
                                     @Override
                                     public void onResourceReady(@NonNull GifDrawable gifDrawable, @Nullable Transition<? super GifDrawable> transition) {
                                         InputConnection ic = getCurrentInputConnection();
+
                                         String[] mimeTypes = EditorInfoCompat.getContentMimeTypes(getCurrentInputEditorInfo());
                                         boolean localgifSupported = false;
                                         for (String mimeType : mimeTypes) {
@@ -1517,12 +1530,8 @@ public class SoftKeyboard extends InputMethodService
                                             output.write(bytes, 0, bytes.length);
                                             output.close();
                                             SoftKeyboard.this.doCommitContent("A waving flag", MIME_TYPE_GIF,mGifFile );
-//                                            if(sessionsx)
-//                                            {
 
-//                                                getCurrentInputConnection().commitText("www.youtube.com" ,15);
-//                                                commitTyped(getCurrentInputConnection());
-//                                            }
+
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
