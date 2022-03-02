@@ -3,20 +3,19 @@ package com.optimum.coolkeybord.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
 public class Gifdata {
     @SerializedName("multiline_text")
     @Expose
-    private String multilineText;
+    private final String multilineText;
     @SerializedName("gif")
     @Expose
     private String gif;
     @SerializedName("thumbnail_gif")
     @Expose
-    private String thumbnailGif;
+    private final String thumbnailGif;
     @SerializedName("youtube_url")
     @Expose
-    private String youtubeUrl;
+    private final String youtubeUrl;
 //    @SerializedName("youtube_url")
 //    @Expose
     private Boolean selectedornot;
@@ -41,9 +40,9 @@ public class Gifdata {
         return multilineText;
     }
 
-    public void setMultilineText(String multilineText) {
-        this.multilineText = multilineText;
-    }
+//    public void setMultilineText(String multilineText) {
+//        this.multilineText = multilineText;
+//    }
 
     public String getGif() {
         return gif;
@@ -57,17 +56,17 @@ public class Gifdata {
         return thumbnailGif;
     }
 
-    public void setThumbnailGif(String thumbnailGif) {
-        this.thumbnailGif = thumbnailGif;
-    }
+//    public void setThumbnailGif(String thumbnailGif) {
+//        this.thumbnailGif = thumbnailGif;
+//    }
 
     public String getYoutubeUrl() {
         return youtubeUrl;
     }
 
-    public void setYoutubeUrl(String youtubeUrl) {
-        this.youtubeUrl = youtubeUrl;
-    }
+//    public void setYoutubeUrl(String youtubeUrl) {
+//        this.youtubeUrl = youtubeUrl;
+//    }
 //    final int id;
 //    final String gifname;
 //    final String gifurl;
