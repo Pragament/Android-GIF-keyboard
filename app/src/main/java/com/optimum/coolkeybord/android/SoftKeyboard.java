@@ -1107,7 +1107,7 @@ public class SoftKeyboard extends InputMethodService
             //+++++++The code which commit text to the selected input++++++++
             mComposing.append(" ");
 
-        }else {
+        }else if(primaryCode != -5) {
             mComposing.append((char) primaryCode);
         }
         //++++++++++++++++++++++++++++++++++++++++++++++++searched edit text+++++++++++++++++++++++++++++++++
@@ -1205,10 +1205,11 @@ public class SoftKeyboard extends InputMethodService
         // Disable preview key on Shift, Delete, Space, Language, Symbol and Emoticon.
         if (primaryCode == -1 || primaryCode == -2 || primaryCode == -10000
                 || primaryCode == -101 || primaryCode == 32) {
-            Log.e("previe" , "setPreviewEnabled");
+
             mInputView.setPreviewEnabled(false);
         }else  if( primaryCode == -5 )
         {
+            Log.e("previe" , "primaryCode");
             try{
                 final int length = searched.getText().toString().length();
                 if (length > 1) {
