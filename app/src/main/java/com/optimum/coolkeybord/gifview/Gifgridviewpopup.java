@@ -250,9 +250,9 @@ public class Gifgridviewpopup extends PopupWindow {
         Log.e("searchtext" ,""+searchtext);
         if(searchtext.equals(""))
         {
-            makeCategories(view.getContext());
+            makeCategories(view);
         }else {
-            getSubcategorieswithString(searchtext , mContext);
+            getSubcategorieswithString(searchtext , mContext ,view);
         }
 
         view.findViewById(R.id.emojis_keyboard_image).setOnClickListener(v -> dismiss());
@@ -260,7 +260,7 @@ public class Gifgridviewpopup extends PopupWindow {
         return  view;
     }
 
-    private void getSubcategorieswithString(String searchtext, Context mContext) {
+    private void getSubcategorieswithString(String searchtext, Context mContext, View view) {
         progresbarfull.setVisibility(View.VISIBLE);
         progresbarfulli.setVisibility(View.VISIBLE);
         progresbarfull.animate();
@@ -295,6 +295,7 @@ public class Gifgridviewpopup extends PopupWindow {
             try{
                 if(response.getJSONArray("items").length() ==0)
                 {
+                    progresbarfull.setVisibility(View.GONE);
                     Toast.makeText(mContext, "No data found with " +searchtext, Toast.LENGTH_SHORT).show();
 
                     return;
@@ -315,7 +316,8 @@ public class Gifgridviewpopup extends PopupWindow {
             gifgridlay.setAdapter(gifgridviewadapter);
             gifgridviewadapter.notifyDataSetChanged();
 
-            makeCategories(mContext);
+            makeCategories(view);
+//            makeCategories(mContext);
             progresbarfull.setVisibility(View.GONE);
         }, error -> {
             Log.e("volley" , "error"+error.networkResponse);
@@ -329,14 +331,14 @@ public class Gifgridviewpopup extends PopupWindow {
     public void setOnGifclickedListnermethod(Gifgridviewpopup.onGifclickedListner listener){
         this.onGifclickedListner = listener;
     }
-    private void makeCategories(Context context) {
+    private void makeCategories(View context) {
         progresbarfull.setVisibility(View.VISIBLE);
         progresbarfulli.setVisibility(View.VISIBLE);
         progresbarfull.animate();
         progresbarfull.setIndeterminate(true);
         Log.e("Serch text" , "is"+searchtext);
         // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(context);
+        RequestQueue queue = Volley.newRequestQueue(context.getContext());
         String caturl ="https://d9.technikh.com/index.php/api/v1/gif/categories";
         @SuppressLint("NotifyDataSetChanged") JsonArrayRequest catjsonArrayRequest = new JsonArrayRequest(caturl, response -> {
 
@@ -377,7 +379,7 @@ public class Gifgridviewpopup extends PopupWindow {
                 public void onItemClick(View view, int position) {
                     gifgridlay.setVisibility(View.VISIBLE);
                     recentgifrec.setVisibility(View.GONE);
-                    recent_gfs.setBackground(context.getDrawable(R.drawable.disselectback));
+                    recent_gfs.setBackground(context.getContext().getDrawable(R.drawable.disselectback));
                     subcategoriesmodelArrayList.clear();
                     LinearLayout topli = view.findViewById(R.id.toplicat);
                     subcatrec.setLayoutManager(new LinearLayoutManager(mContext , LinearLayoutManager.HORIZONTAL, false));
@@ -394,7 +396,7 @@ public class Gifgridviewpopup extends PopupWindow {
                         public void onItemClick(View view, int position) {
                             gifgridlay.setVisibility(View.VISIBLE);
                             recentgifrec.setVisibility(View.GONE);
-                            recent_gfs.setBackground(context.getDrawable(R.drawable.disselectback));
+                            recent_gfs.setBackground(context.getContext().getDrawable(R.drawable.disselectback));
                             getSubcategories(subcategoriesmodelArrayList.get(position).getSubcategoryid() ,mContext, 1);
 //                                LinearLayout subcattopli = view.findViewById(R.id.toplicat);
 
@@ -447,7 +449,13 @@ public class Gifgridviewpopup extends PopupWindow {
             categoriesrec.setLayoutManager(new LinearLayoutManager(mContext , LinearLayoutManager.HORIZONTAL, false));
             categoriesAdapter = new CategoriesAdapter( categoriesmodelArrayList, mContext);
             categoriesrec.setAdapter(categoriesAdapter);
-            categoriesmodelArrayList.get(0).setSelectedornot(true);
+            if(searchtext.isEmpty())
+            {
+                categoriesmodelArrayList.get(0).setSelectedornot(true);
+            }else {
+                context.findViewById(R.id.emojis_keyboard_image).setBackground(context.getContext().getDrawable(R.drawable.selectedgif));
+            }
+
             categoriesAdapter.notifyDataSetChanged();
             //++++++++++++++++If empty+++++++++++++++++++++++++++++++++++++++++++++++++++++
             if(subcategoriesmodelArrayList.isEmpty() && searchtext.equals(""))
@@ -535,9 +543,14 @@ public class Gifgridviewpopup extends PopupWindow {
                         JSONObject obejct = response.getJSONArray("items").getJSONObject(i);
                         if( i ==0)
                         {
-                            Log.e("getSubcategories" , "subcaturl for gifs"+obejct.toString());
-                            subgifdataArrayList.add(new Gifdata(obejct.getString("multiline_text") ,obejct.getString("gif")
-                                    ,obejct.getString("thumbnail_gif") ,obejct.getString("youtube_url") , true));
+                            if(searchtext.isEmpty())
+                            {
+                                Log.e("getSubcategories" , "subcaturl for gifs"+obejct.toString());
+                                subgifdataArrayList.add(new Gifdata(obejct.getString("multiline_text") ,obejct.getString("gif")
+                                        ,obejct.getString("thumbnail_gif") ,obejct.getString("youtube_url") , true));
+                            }
+
+
                         }else {
                             subgifdataArrayList.add(new Gifdata(obejct.getString("multiline_text") ,obejct.getString("gif")
                                     ,obejct.getString("thumbnail_gif") ,obejct.getString("youtube_url") , false));

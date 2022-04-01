@@ -142,7 +142,7 @@ public class SoftKeyboard extends InputMethodService
 
         mInputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         mWordSeparators = getResources().getString(R.string.word_separators);
-      imagesDir = new File(getFilesDir(), "sendgifs");
+
       //+++++++++++++++++++++++++need to be tested++++++++++++++++++++++++++++++++++
 //      imagesDir.mkdirs();
 
@@ -1303,6 +1303,12 @@ public class SoftKeyboard extends InputMethodService
                                     ByteBuffer byteBuffer = gifDrawable.getBuffer();
                                     FileOutputStream output;
                                     try {
+                                        imagesDir = new File(getFilesDir(), "sendgifs");
+                                        if(!(imagesDir.exists()) )
+                                        {
+                                            imagesDir.mkdir();
+                                        }
+//                                        imagesDir = new File(getFilesDir(), "sendgifs");
                                         mGifFile = File.createTempFile("gifitem", ".gif", imagesDir);
 //                                        mGifFile = File.createTempFile("gifitem", ".gif", outputDir);
 
