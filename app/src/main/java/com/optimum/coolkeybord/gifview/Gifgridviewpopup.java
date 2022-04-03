@@ -14,6 +14,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -60,6 +61,7 @@ public class Gifgridviewpopup extends PopupWindow {
     private RecyclerView subcatrec;
     private RecyclerView gifgridlay;
     private RecyclerView recentgifrec;
+    private ImageButton emojis_keyboard_image;
     LinearLayout recent_gfs;
     //++++++++++++++++++++++++++++++Progress bar++++++++++++++++++++++
     private ProgressBar progresbarfull;
@@ -130,10 +132,12 @@ public class Gifgridviewpopup extends PopupWindow {
                 {
                     subgifdataArrayList.get(position).setSelectedornot(true);
                     topli.setBackground(view.getContext().getDrawable(R.drawable.selectedgif));
+
                 }else {
                     subgifdataArrayList.get(position).setSelectedornot(false);
                     topli.setBackground(view.getContext().getDrawable(R.drawable.disselectback));
                 }
+//                view.findViewById(R.id.emojis_keyboard_image).setBackground(view.getContext().getDrawable(R.drawable.disselectback));
                 onGifclickedListner.onGifclicked(subgifdataArrayList.get(position) ,settingSesson , 1);
 
             }
@@ -156,6 +160,7 @@ public class Gifgridviewpopup extends PopupWindow {
                     recentsubgifdataArrayList.get(position).setSelectedornot(false);
                     topli.setBackground(view.getContext().getDrawable(R.drawable.disselectback));
                 }
+//                view.findViewById(R.id.emojis_keyboard_image).setBackground(view.getContext().getDrawable(R.drawable.disselectback));
                 onGifclickedListner.onGifclicked(recentsubgifdataArrayList.get(position) ,settingSesson ,2);
 
             }
@@ -232,7 +237,7 @@ public class Gifgridviewpopup extends PopupWindow {
             }
 
             recent_gfs.setBackground(view1.getContext().getDrawable(R.drawable.selectedgif));
-
+//            view.findViewById(R.id.emojis_keyboard_image).setBackground(view.getContext().getDrawable(R.drawable.disselectback));
             Toast.makeText(mContext, "recent found", Toast.LENGTH_SHORT).show();
             gifgridlay.setVisibility(View.GONE);
             recentgifrec.setVisibility(View.VISIBLE);
@@ -254,7 +259,7 @@ public class Gifgridviewpopup extends PopupWindow {
         }else {
             getSubcategorieswithString(searchtext , mContext ,view);
         }
-
+        emojis_keyboard_image =  view.findViewById(R.id.emojis_keyboard_image);
         view.findViewById(R.id.emojis_keyboard_image).setOnClickListener(v -> dismiss());
 
         return  view;
@@ -297,17 +302,19 @@ public class Gifgridviewpopup extends PopupWindow {
                 {
                     progresbarfull.setVisibility(View.GONE);
                     Toast.makeText(mContext, "No data found with " +searchtext, Toast.LENGTH_SHORT).show();
-
+                    makeCategories(view);
                     return;
-                }
-                for(int i =0 ;i < response.getJSONArray("items").length();i++)
-                {
-                    JSONObject obejct = response.getJSONArray("items").getJSONObject(i);
-                    subgifdataArrayList.add(new Gifdata(obejct.getString("multiline_text") ,obejct.getString("gif")
-                            ,obejct.getString("thumbnail_gif") ,obejct.getString("youtube_url") , false));
+                }else {
+                    for(int i =0 ;i < response.getJSONArray("items").length();i++)
+                    {
+                        JSONObject obejct = response.getJSONArray("items").getJSONObject(i);
+                        subgifdataArrayList.add(new Gifdata(obejct.getString("multiline_text") ,obejct.getString("gif")
+                                ,obejct.getString("thumbnail_gif") ,obejct.getString("youtube_url") , false));
 
 
+                    }
                 }
+
             }catch (Exception e)
             {
                 e.printStackTrace();
@@ -399,7 +406,7 @@ public class Gifgridviewpopup extends PopupWindow {
                             recent_gfs.setBackground(context.getContext().getDrawable(R.drawable.disselectback));
                             getSubcategories(subcategoriesmodelArrayList.get(position).getSubcategoryid() ,mContext, 1);
 //                                LinearLayout subcattopli = view.findViewById(R.id.toplicat);
-
+//                            view.findViewById(R.id.emojis_keyboard_image).setBackground(view.getContext().getDrawable(R.drawable.disselectback));
                         }
 
                         @Override
@@ -407,6 +414,8 @@ public class Gifgridviewpopup extends PopupWindow {
 
                         }
                     }));
+                    emojis_keyboard_image.setBackground(view.getContext().getDrawable(R.drawable.disselectback));
+//                    view.findViewById(R.id.emojis_keyboard_image).setBackground(view.getContext().getDrawable(R.drawable.disselectback));
                     getSubcategories(subcategoriesmodelArrayList.get(position).getSubcategoryid() ,mContext, 1);
 //                        getSubcategories(categoriesmodelArrayList.get(position).getSubcategoryid() ,mContext);
 
@@ -426,6 +435,7 @@ public class Gifgridviewpopup extends PopupWindow {
                         topli.setBackground(view.getContext().getDrawable(R.drawable.disselectback));
 
                     }
+
 //                        categoriesmodelArrayList.get(0).setSelectedornot(true);
                     categoriesAdapter.notifyDataSetChanged();
 
@@ -476,6 +486,7 @@ public class Gifgridviewpopup extends PopupWindow {
                         gifgridlay.setVisibility(View.VISIBLE);
                         recentgifrec.setVisibility(View.GONE);
                         getSubcategories(subcategoriesmodelArrayList.get(position).getSubcategoryid() ,mContext ,1 );
+//                        view.findViewById(R.id.emojis_keyboard_image).setBackground(view.getContext().getDrawable(R.drawable.disselectback));
                     }
 
                     @Override
