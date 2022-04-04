@@ -404,7 +404,7 @@ public class Gifgridviewpopup extends PopupWindow {
                             gifgridlay.setVisibility(View.VISIBLE);
                             recentgifrec.setVisibility(View.GONE);
                             recent_gfs.setBackground(context.getContext().getDrawable(R.drawable.disselectback));
-                            getSubcategories(subcategoriesmodelArrayList.get(position).getSubcategoryid() ,mContext, 1);
+                            getSubcategories(categoriesmodelArrayList.get(position).getSubcategoryid() ,mContext, 1);
 //                                LinearLayout subcattopli = view.findViewById(R.id.toplicat);
 //                            view.findViewById(R.id.emojis_keyboard_image).setBackground(view.getContext().getDrawable(R.drawable.disselectback));
                         }
@@ -416,7 +416,7 @@ public class Gifgridviewpopup extends PopupWindow {
                     }));
                     emojis_keyboard_image.setBackground(view.getContext().getDrawable(R.drawable.disselectback));
 //                    view.findViewById(R.id.emojis_keyboard_image).setBackground(view.getContext().getDrawable(R.drawable.disselectback));
-                    getSubcategories(subcategoriesmodelArrayList.get(position).getSubcategoryid() ,mContext, 1);
+                    getSubcategories(categoriesmodelArrayList.get(position).getSubcategoryid() ,mContext, 1);
 //                        getSubcategories(categoriesmodelArrayList.get(position).getSubcategoryid() ,mContext);
 
                     if(!categoriesmodelArrayList.get(position).isSelectedornot())
@@ -459,6 +459,24 @@ public class Gifgridviewpopup extends PopupWindow {
             categoriesrec.setLayoutManager(new LinearLayoutManager(mContext , LinearLayoutManager.HORIZONTAL, false));
             categoriesAdapter = new CategoriesAdapter( categoriesmodelArrayList, mContext);
             categoriesrec.setAdapter(categoriesAdapter);
+            categoriesrec.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
+
+                    if (!recyclerView.canScrollVertically(1)) {
+//                            Toast.makeText(mContext, "Last", Toast.LENGTH_LONG).show();
+//                        if(processisnotdone ==0)
+//                        {
+//                            processisnotdone =1;
+//                        }else {
+//                            processisnotdone =1;
+//                            Log.e("Plaeas" ,"wait");
+//                        }
+
+                    }
+                }
+            });
             if(searchtext.isEmpty())
             {
                 categoriesmodelArrayList.get(0).setSelectedornot(true);
