@@ -398,25 +398,10 @@ public class Gifgridviewpopup extends PopupWindow {
                     subcategoriesmodelArrayList.get(0).setSelectedornot(true);
                     subcatrec.setAdapter(subcatadapter);
                     subcatadapter.notifyItemChanged(0);
-                    subcatrec.addOnItemTouchListener(new RecyclerItemClickListener(mContext, subcatrec, new RecyclerItemClickListener.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            gifgridlay.setVisibility(View.VISIBLE);
-                            recentgifrec.setVisibility(View.GONE);
-                            recent_gfs.setBackground(context.getContext().getDrawable(R.drawable.disselectback));
-                            getSubcategories(categoriesmodelArrayList.get(position).getSubcategoryid() ,mContext, 1);
-//                                LinearLayout subcattopli = view.findViewById(R.id.toplicat);
-//                            view.findViewById(R.id.emojis_keyboard_image).setBackground(view.getContext().getDrawable(R.drawable.disselectback));
-                        }
 
-                        @Override
-                        public void onItemLongClick(View view, int position) {
-
-                        }
-                    }));
                     emojis_keyboard_image.setBackground(view.getContext().getDrawable(R.drawable.disselectback));
 //                    view.findViewById(R.id.emojis_keyboard_image).setBackground(view.getContext().getDrawable(R.drawable.disselectback));
-                    getSubcategories(categoriesmodelArrayList.get(position).getSubcategoryid() ,mContext, 1);
+                    getSubcategories(subcategoriesmodelArrayList.get(0).getSubcategoryid() ,mContext, 1);
 //                        getSubcategories(categoriesmodelArrayList.get(position).getSubcategoryid() ,mContext);
 
                     if(!categoriesmodelArrayList.get(position).isSelectedornot())
@@ -446,7 +431,22 @@ public class Gifgridviewpopup extends PopupWindow {
 
                 }
             }));
+            subcatrec.addOnItemTouchListener(new RecyclerItemClickListener(mContext, subcatrec, new RecyclerItemClickListener.OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    gifgridlay.setVisibility(View.VISIBLE);
+                    recentgifrec.setVisibility(View.GONE);
+                    recent_gfs.setBackground(context.getContext().getDrawable(R.drawable.disselectback));
+                    getSubcategories(subcategoriesmodelArrayList.get(position).getSubcategoryid() ,mContext, 1);
+//                                LinearLayout subcattopli = view.findViewById(R.id.toplicat);
+//                            view.findViewById(R.id.emojis_keyboard_image).setBackground(view.getContext().getDrawable(R.drawable.disselectback));
+                }
 
+                @Override
+                public void onItemLongClick(View view, int position) {
+
+                }
+            }));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 
                 List<Categoriesmodel> deduped = categoriesmodelArrayList.stream().distinct().collect(Collectors.toList());
