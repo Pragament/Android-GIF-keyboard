@@ -19,6 +19,7 @@
         >
         <activity android:name=".MainActivity"
             android:exported="true"
+
            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,6 +28,7 @@
             </intent-filter>
         </activity>
         <activity
+
             android:exported="true"
             android:name=".android.ImePreferences"
             android:label="@string/settings_name">
@@ -36,6 +38,7 @@
         </activity>
 
         <activity
+
             android:exported="true"
             android:name=".ThemeActivity"
             android:label="@string/choose_theme_title" />
@@ -45,6 +48,7 @@
 
     </activity>
         <service
+
             android:exported="true"
             android:name=".android.SoftKeyboard"
             android:permission="android.permission.BIND_INPUT_METHOD">
@@ -58,6 +62,7 @@
         </service>
 
         <provider
+
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.optimum.coolkeybord"
             android:exported="false"

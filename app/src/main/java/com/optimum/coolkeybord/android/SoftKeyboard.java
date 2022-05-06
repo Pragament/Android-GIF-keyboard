@@ -1252,7 +1252,8 @@ public class SoftKeyboard extends InputMethodService
                 @SuppressLint("InflateParams") View popupView = layoutInflater.inflate(R.layout.gifgridviewlayout, null );
                 gifpopupWindow = new Gifgridviewpopup(popupView, this ,searchtext ,historyviewmodel);
                 gifpopupWindow.setSizeForSoftKeyboard();
-                gifpopupWindow.setSize(mQwertyKeyboard.getMinWidth() +20, (mQwertyKeyboard.getHeight() +120));
+                gifpopupWindow.setSize(gifpopupWindow.getWidth(), (gifpopupWindow.getHeight()));
+//                gifpopupWindow.setSize(mQwertyKeyboard.getMinWidth() +20, (mQwertyKeyboard.getHeight() +120));
                 gifpopupWindow.showAtLocation(mInputView.getRootView(), Gravity.BOTTOM, 0, 0);
                 gifpopupWindow.setOnGifclickedListnermethod((gifitem, settingSesson, pos1) -> {
                     settingSesson = new SettingSesson(gifpopupWindow.getContentView().getContext());
