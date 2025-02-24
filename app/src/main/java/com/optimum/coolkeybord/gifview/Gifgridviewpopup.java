@@ -272,7 +272,8 @@ public class Gifgridviewpopup extends PopupWindow {
         progresbarfull.animate();
         progresbarfull.setIndeterminate(true);
         settingSesson = new SettingSesson(mContext);
-        String subcaturl ="https://d9.technikh.com/index.php/api/v1/gif/search/"+searchtext+"?a=b";
+        //String subcaturl ="https://d9.technikh.com/index.php/api/v1/gif/search/"+searchtext+"?a=b";
+        String subcaturl ="https://staticapis.pragament.com/language_learning/gif-data.json";
 
         RequestQueue queue = Volley.newRequestQueue(this.mContext);
         String selectedlang;
@@ -347,7 +348,7 @@ public class Gifgridviewpopup extends PopupWindow {
         Log.e("Serch text" , "is"+searchtext);
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(context.getContext());
-        String caturl ="https://d9.technikh.com/index.php/api/v1/gif/categories";
+        String caturl ="https://staticapis.pragament.com/language_learning/categories.json";
         @SuppressLint("NotifyDataSetChanged") JsonArrayRequest catjsonArrayRequest = new JsonArrayRequest(caturl, response -> {
 
             Log.e("volley" , "response"+response.toString());
@@ -551,7 +552,8 @@ public class Gifgridviewpopup extends PopupWindow {
         progresbarfull.setIndeterminate(true);
       SettingSesson settingSesson =  new SettingSesson(mContext);
         RequestQueue queue = Volley.newRequestQueue(mContext);
-        String subcaturl ="https://d9.technikh.com/index.php/api/v1/gif/search/all?sub-category-id="+subcategoryid+"&languages="+ settingSesson.getSlelectedlang() +"&current_page="+pagenumber;
+        //String subcaturl ="https://d9.technikh.com/index.php/api/v1/gif/search/all?sub-category-id="+subcategoryid+"&languages="+ settingSesson.getSlelectedlang() +"&current_page="+pagenumber;
+        String subcaturl ="https://staticapis.pragament.com/language_learning/gif-data.json";
       if(pagenumber ==1)
       {
           subgifdataArrayList.clear();
