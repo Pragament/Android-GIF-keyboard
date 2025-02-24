@@ -19,3 +19,4 @@ The 'android-gif-keyboard' project JDK configuration is now set through the #GRA
 Deprecated Gradle features were used in this build, making it incompatible with Gradle 8.0.
 Use '--warning-mode all' to show the individual deprecation warnings.
 See https://docs.gradle.org/7.0.2/userguide/command_line_interface.html#sec:command_line_warnings
+
