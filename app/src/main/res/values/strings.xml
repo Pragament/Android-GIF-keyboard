@@ -47,4 +47,6 @@
     <string name="show_english_text">Show english text</string>
     <string name="show_telugu_text">Show telugu text</string>
     <string name="show_tamil_text">Show tamil text</string>
+    <string name="append_text_to_gif">Append text to GIF</string>
+    <string name="search_gif_sub_or_categories">Search gif sub or categories</string>
 </resources>

@@ -240,34 +240,34 @@ public class LatinKeyboardView extends KeyboardView {
             if (key.label != null) {
 
                 if (key.label.toString().equals("q") || key.label.toString().equals("Q") || key.label.toString().equals("۱"))
-                    canvas.drawText(String.valueOf(1), key.x + (key.width / 2) + 10, key.y + keyYLocation, paint);
+                    canvas.drawText("", key.x + (key.width / 2) + 10, key.y + keyYLocation, paint);
 
                 else if (((key.codes[0] == 'w' || key.codes[0] == 'W') && SoftKeyboard.mActiveKeyboard == "en_US") || key.label.toString().equals("۲"))
-                    canvas.drawText(String.valueOf(2), key.x + (key.width / 2) + 10, key.y + keyYLocation, paint);
+                    canvas.drawText("", key.x + (key.width / 2) + 10, key.y + keyYLocation, paint);
 
                 else if (key.label.toString().equals("e") || key.label.toString().equals("E") || key.label.toString().equals("۳"))
-                    canvas.drawText(String.valueOf(3), key.x + (key.width / 2) + 10, key.y + keyYLocation, paint);
+                    canvas.drawText("", key.x + (key.width / 2) + 10, key.y + keyYLocation, paint);
 
                 else if (key.label.toString().equals("r") || key.label.toString().equals("R") || key.label.toString().equals("۴"))
-                    canvas.drawText(String.valueOf(4), key.x + (key.width / 2) + 10, key.y + keyYLocation, paint);
+                    canvas.drawText("", key.x + (key.width / 2) + 10, key.y + keyYLocation, paint);
 
                 else if (key.label.toString().equals("t") || key.label.toString().equals("T") || key.label.toString().equals("۵"))
-                    canvas.drawText(String.valueOf(5), key.x + (key.width / 2) + 10, key.y + keyYLocation, paint);
+                    canvas.drawText("", key.x + (key.width / 2) + 10, key.y + keyYLocation, paint);
 
                 else if (key.label.toString().equals("y") || key.label.toString().equals("Y") || key.label.toString().equals("۶"))
-                    canvas.drawText(String.valueOf(6), key.x + (key.width / 2) + 10, key.y + keyYLocation, paint);
+                    canvas.drawText("", key.x + (key.width / 2) + 10, key.y + keyYLocation, paint);
 
                 else if (key.label.toString().equals("u") || key.label.toString().equals("U") || key.label.toString().equals("۷"))
-                    canvas.drawText(String.valueOf(7), key.x + (key.width / 2) + 10, key.y + keyYLocation, paint);
+                    canvas.drawText("", key.x + (key.width / 2) + 10, key.y + keyYLocation, paint);
 
                 else if (key.label.toString().equals("i") || key.label.toString().equals("I") || key.label.toString().equals("۸"))
-                    canvas.drawText(String.valueOf(8), key.x + (key.width / 2) + 10, key.y + keyYLocation, paint);
+                    canvas.drawText("", key.x + (key.width / 2) + 10, key.y + keyYLocation, paint);
 
                 else if (key.label.toString().equals("o") || key.label.toString().equals("o") || key.label.toString().equals("۹"))
-                    canvas.drawText(String.valueOf(9), key.x + (key.width / 2) + 10, key.y + keyYLocation, paint);
+                    canvas.drawText("", key.x + (key.width / 2) + 10, key.y + keyYLocation, paint);
 
                 else if (key.label.toString().equals("p") || key.label.toString().equals("P") || key.label.toString().equals("۰"))
-                    canvas.drawText(String.valueOf(0), key.x + (key.width / 2) + 10, key.y + keyYLocation, paint);
+                    canvas.drawText("", key.x + (key.width / 2) + 10, key.y + keyYLocation, paint);
 
                     // for Pashto and Farsi keyboards.
                 else if (key.label.toString().equals("ا"))

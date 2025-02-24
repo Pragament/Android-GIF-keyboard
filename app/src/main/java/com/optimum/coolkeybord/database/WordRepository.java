@@ -47,6 +47,11 @@ public class WordRepository {
             mWordDao.insertRecentGif(recentGifEntity);
         });
     }
+    List<RecentGifEntity> isGifexists(String  idp) {
+//        HistoryDatabase.databaseWriteExecutor.execute(() -> {
+       return      mWordDao.isGifexists(idp);
+//        });
+    }
     boolean delete(Historymodal word) {
         HistoryDatabase.databaseWriteExecutor.execute(() -> {
             mWordDao.delete(word);

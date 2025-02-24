@@ -20,9 +20,10 @@
             <ImageView
                 android:id="@+id/backimgtogif"
                 android:padding="15dp"
-                android:src="@drawable/gph_ic_back"
+                android:src="@drawable/ic_baseline_arrowios_24"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:contentDescription="back">
 
             </ImageView>
             <androidx.cardview.widget.CardView
@@ -33,21 +34,44 @@
                 app:cardUseCompatPadding="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <CheckBox
-                    android:onClick="onClick"
-                    android:layout_gravity="center_horizontal"
-                    android:button="@null"
-                    android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
-                    android:textColor="@color/black"
-                    android:textAlignment="center"
-                    android:textSize="18sp"
-                    android:text="@string/append_link_to_youtube_video_if_available"
-                    android:id="@+id/youtubehcekc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    >
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <CheckBox
 
-                </CheckBox>
+                        android:onClick="onClick"
+                        android:layout_gravity="center_horizontal"
+                        android:button="@null"
+                        android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:text="@string/append_link_to_youtube_video_if_available"
+                        android:id="@+id/youtubehcekc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:ignore="UsingOnClickInXml">
+
+                    </CheckBox>
+                    <CheckBox
+
+                        android:onClick="onClick"
+                        android:layout_gravity="center_horizontal"
+                        android:button="@null"
+                        android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:text="@string/append_text_to_gif"
+                        android:id="@+id/appendtxttogif"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:ignore="UsingOnClickInXml">
+
+                    </CheckBox>
+
+                </LinearLayout>
 
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
@@ -104,7 +128,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <TextView
-                        android:textSize="20dp"
+                        android:textSize="20sp"
                         android:textColor="@color/black"
 
                         android:textAlignment="center"
@@ -129,15 +153,15 @@
                                 android:padding="10dp"
                                 android:rotation="90"
                                 android:src="@drawable/ic_baseline_arrowios_24"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent">
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:contentDescription="increasechar">
 
                             </ImageView>
 
                         </LinearLayout>
                         <TextView
                             android:layout_weight="1"
-                            android:layout_below="@+id/increase_char"
                             android:id="@+id/minout_txt"
                             android:textSize="25dp"
                             android:textColor="@color/black"
@@ -155,12 +179,11 @@
                             <ImageView
 
                                 android:layout_weight="1"
-                                android:layout_below="@+id/minout_txt"
                                 android:id="@+id/decrease_char"
                                 android:padding="10dp"
                                 android:rotation="270"
                                 android:src="@drawable/ic_baseline_arrowios_24"
-                                android:layout_width="match_parent"
+                                android:layout_width="0dp"
                                 android:layout_height="match_parent">
 
                             </ImageView>

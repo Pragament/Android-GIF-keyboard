@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "252887680410",
+    "project_id": "coolkeybord",
+    "storage_bucket": "coolkeybord.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:252887680410:android:a32ccf966f6f733e74a623",
+        "android_client_info": {
+          "package_name": "com.optimum.coolkeybord"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "252887680410-er97kd51g9qd7b3icgr42nt5bs8b45hv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.optimum.coolkeybord",
+            "certificate_hash": "bb10b5ab2c60980abe505284ede055d5507661c5"
+          }
+        },
+        {
+          "client_id": "252887680410-ftoieim52hlqi4pfvkqoepgio300lvbm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWxVT4IE3vVeKquBowxT1dbexdPDNLeMw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "252887680410-ftoieim52hlqi4pfvkqoepgio300lvbm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

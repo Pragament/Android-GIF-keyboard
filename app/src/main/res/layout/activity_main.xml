@@ -48,43 +48,9 @@
                 android:textStyle="normal|bold" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/layout_AddLanguages"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="40dp"
-            android:background="@drawable/button_bg"
-            android:minWidth="@dimen/button_minWidth"
-            android:orientation="vertical"
-            android:padding="10dp"
-            android:visibility="gone"
-            ads:layout_constraintEnd_toEndOf="parent"
-            ads:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/ic_language_48dp"
-                tools:ignore="VectorDrawableCompat" />
-
-            <TextView
-                android:id="@+id/add_languages"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/add_languages"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:textStyle="normal|bold" />
-
-        </LinearLayout>
 
         <LinearLayout
+
             android:id="@+id/layout_ChooseInput"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -119,113 +85,8 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/layout_ChooseTheme"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="40dp"
-            android:background="@drawable/button_bg"
-            android:minWidth="@dimen/button_minWidth"
-            android:orientation="vertical"
-            android:padding="10dp"
-            android:visibility="gone"
-            ads:layout_constraintEnd_toEndOf="parent"
-            ads:layout_constraintTop_toBottomOf="@+id/layout_AddLanguages">
 
-            <ImageView
-                android:id="@+id/imageView4"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/ic_palette_48dp"
-                tools:ignore="VectorDrawableCompat" />
 
-            <TextView
-                android:id="@+id/choose_theme_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/choose_theme"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:textStyle="normal|bold" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_ManageDictionary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/button_bg"
-            android:minWidth="@dimen/button_minWidth"
-            android:orientation="vertical"
-            android:padding="10dp"
-            android:visibility="gone"
-            ads:layout_constraintStart_toStartOf="parent"
-            ads:layout_constraintTop_toBottomOf="@+id/layout_ChooseInput">
-
-            <ImageView
-                android:id="@+id/imageView5"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/ic_dictionary_48"
-                tools:ignore="VectorDrawableCompat" />
-
-            <TextView
-                android:id="@+id/manage_dictionary_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/dictionaries"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:textStyle="normal|bold" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_about"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="40dp"
-            android:background="@drawable/button_bg"
-            android:minWidth="@dimen/button_minWidth"
-            android:orientation="vertical"
-            android:padding="10dp"
-            android:visibility="gone"
-            ads:layout_constraintEnd_toEndOf="parent"
-            ads:layout_constraintTop_toBottomOf="@+id/layout_ChooseTheme">
-
-            <ImageView
-                android:id="@+id/imageView6"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/ic_information_48"
-                tools:ignore="VectorDrawableCompat" />
-
-            <TextView
-                android:id="@+id/about_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="About"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:textStyle="normal|bold" />
-
-        </LinearLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

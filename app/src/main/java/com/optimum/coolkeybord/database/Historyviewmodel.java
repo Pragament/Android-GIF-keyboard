@@ -27,11 +27,13 @@ public class Historyviewmodel extends AndroidViewModel {
     public  LiveData<List<Historymodal>> getAllWords() { return mAllWords; }
 
     public  LiveData<List<RecentGifEntity>> getmAllRecentGifs() { return listLiveDatarecentgif; }
+//    public  LiveData<List<RecentGifEntity>> isGifexists() { return listLiveDatarecentgif; }
 
     public void insert(Historymodal word) { mRepository.insert(word); }
 
 
     public void insertgif(RecentGifEntity recentGifEntity) { mRepository.insertRecentGif(recentGifEntity); }
+    public void isGifexists(String idp) { mRepository.isGifexists(idp); }
 
     public  boolean delete(Historymodal word) {
       return   mRepository.delete(word);
