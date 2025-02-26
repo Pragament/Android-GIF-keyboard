@@ -1,5 +1,6 @@
 package com.optimum.coolkeybord;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.InputFilter;
@@ -24,6 +25,8 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.optimum.coolkeybord.adapter.CategoriesAdapter;
+import com.optimum.coolkeybord.adapter.Gifgridviewadapter;
 import com.optimum.coolkeybord.adapter.SearchAdapter;
 import com.optimum.coolkeybord.settingssession.SettingSesson;
 
@@ -44,7 +47,9 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
     private RadioButton searchbystart;
     private RadioButton searchbycontains;
     private CheckBox youtubehcekc;
+    private CheckBox textinsteadcekc;
     private CheckBox appendtxttogif;
+    private Gifgridviewadapter gifAdapter;
 //    EditText searchEditText;
 //    Spinner languageSpinner;
 //    ArrayList<String> languages, words;
@@ -68,6 +73,7 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
         showtel_ch = findViewById(R.id.showtel_ch);
         showtamil_ch = findViewById(R.id.showtamil_ch);
         youtubehcekc = findViewById(R.id.youtubehcekc);
+        textinsteadcekc= findViewById(R.id.textinsteadcekc);
         appendtxttogif = findViewById(R.id.appendtxttogif);
 
         increase_char = findViewById(R.id.increase_char);
@@ -85,6 +91,7 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
         }
         youtubehcekc.setChecked(settingSesson.getAppendlink());
         appendtxttogif.setChecked(settingSesson.getgiflink());
+        textinsteadcekc.setChecked(settingSesson.showTextInsteadOfThumbnail());
         minout_txt.setText(String.valueOf(Integer.parseInt(settingSesson.getMinimumcharacters())));
         settingSesson.setMinimumcharacters(minout_txt.getText().toString());
         starconrd.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -158,6 +165,16 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 settingSesson.appendgiflink(b);
+            }
+        });
+        textinsteadcekc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                settingSesson.showTextInsteadOfThumbnail(b);
+                if (gifAdapter != null) { // Ensure adapter is not null
+                    gifAdapter.notifyDataSetChanged();
+                }
             }
         });
 //        languageSpinner = findViewById(R.id.spinner);
