@@ -12,6 +12,7 @@ public class SettingSesson {
     private static final String Pref_Name1="Orderfile";
     private static final String Appendlink="appendlinkyou";
     private static final String Appendgiflink="appendgiflink";
+    private static final String ShowTextInsteadOfThumbnail = "show_text_instead_of_thumbnail";
     private static final String SearchbyStartsEnd="searchbystarts";
     private static final String SearchbyEnd="searchbyend";
     private static final String Minimumcharacters="minimumcharacters";
@@ -35,6 +36,11 @@ public class SettingSesson {
     }
     public boolean getgiflink() {
         return pref.getBoolean(Appendgiflink, false);
+//        return Appendlink;
+    }
+    public boolean showTextInsteadOfThumbnail()
+    {
+        return pref.getBoolean(ShowTextInsteadOfThumbnail, false);
 //        return Appendlink;
     }
 
@@ -128,6 +134,11 @@ public class SettingSesson {
         editor.putBoolean(Appendgiflink, is_il);
 
         // commit changes
+        editor.commit();
+    }
+    public void showTextInsteadOfThumbnail(Boolean is_il)
+    {
+        editor.putBoolean(ShowTextInsteadOfThumbnail, is_il);
         editor.commit();
     }
     public void setSearchbystarts( String value)
