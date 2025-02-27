@@ -3,6 +3,11 @@ plugins {
 }
 
 android {
+
+
+    buildFeatures {
+        buildConfig = true
+    }
     compileSdk 31
 
     defaultConfig {
@@ -21,6 +26,7 @@ android {
     buildTypes {
         release {
             debuggable false
+
             minifyEnabled true
             // Enables resource shrinking, which is performed by the
             // Android Gradle plugin.
@@ -33,9 +39,10 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
     }
+    namespace 'com.optimum.coolkeybord'
 }
 
 dependencies {
