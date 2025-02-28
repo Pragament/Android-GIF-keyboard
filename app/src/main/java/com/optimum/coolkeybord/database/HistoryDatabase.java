@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 // adding annotation for our database entities and db version.
-@Database(entities = {Historymodal.class, RecentGifEntity.class}, version = 1)
+@Database(entities = {Historymodal.class, RecentGifEntity.class}, version = 1 ,exportSchema = false)
 public abstract class HistoryDatabase extends RoomDatabase {
 
     public abstract WordDao wordDao();
