@@ -49,6 +49,7 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
     private CheckBox youtubehcekc;
     private CheckBox textinsteadcekc;
     private CheckBox appendtxttogif;
+    private CheckBox switchKeyboard;
     private Gifgridviewadapter gifAdapter;
 //    EditText searchEditText;
 //    Spinner languageSpinner;
@@ -75,6 +76,7 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
         youtubehcekc = findViewById(R.id.youtubehcekc);
         textinsteadcekc= findViewById(R.id.textinsteadcekc);
         appendtxttogif = findViewById(R.id.appendtxttogif);
+        switchKeyboard = findViewById(R.id.switchKeyboard);
 
         increase_char = findViewById(R.id.increase_char);
         minout_txt = findViewById(R.id.minout_txt);
@@ -91,6 +93,7 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
         }
         youtubehcekc.setChecked(settingSesson.getAppendlink());
         appendtxttogif.setChecked(settingSesson.getgiflink());
+        switchKeyboard.setChecked(settingSesson.switchKeyboardToDefault());
         textinsteadcekc.setChecked(settingSesson.showTextInsteadOfThumbnail());
         minout_txt.setText(String.valueOf(Integer.parseInt(settingSesson.getMinimumcharacters())));
         settingSesson.setMinimumcharacters(minout_txt.getText().toString());
@@ -167,6 +170,13 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
                 settingSesson.appendgiflink(b);
             }
         });
+        switchKeyboard.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                settingSesson.setSwitchKeyboardToDefault(b);
+            }
+        });
+
         textinsteadcekc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
@@ -177,6 +187,7 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
                 }
             }
         });
+
 //        languageSpinner = findViewById(R.id.spinner);
 //        searchEditText = findViewById(R.id.searchText);
 //        Button searchButton = findViewById(R.id.searchButton);

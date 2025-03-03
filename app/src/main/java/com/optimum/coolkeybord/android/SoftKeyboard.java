@@ -126,7 +126,6 @@ public class SoftKeyboard extends InputMethodService
     // Keyboards (not subtypes)
     boolean gifSupported = false;
     private LatinKeyboard mQwertyKeyboard;
-
     private LatinKeyboard mCurKeyboard;
     public static String mActiveKeyboard;
     //    private EmojiconsPopup popupWindow = null;
@@ -319,7 +318,13 @@ public class SoftKeyboard extends InputMethodService
                 flag, null);
 
         // Switch back to the default keyboard
-        switchToDefaultKeyboard();
+
+        boolean isDefaultKeyboard = settingSesson.switchKeyboardToDefault();
+        if(isDefaultKeyboard)
+        {
+            switchToDefaultKeyboard();
+        }
+
 //        getCurrentInputConnection().commitText("sdfsd",1);
     }
 
