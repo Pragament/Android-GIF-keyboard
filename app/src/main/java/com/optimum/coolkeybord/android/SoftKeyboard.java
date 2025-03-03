@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 import android.app.AppOpsManager;
 import android.app.Dialog;
 import android.content.ClipDescription;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.inputmethodservice.InputMethodService;
@@ -19,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -98,7 +100,7 @@ public class SoftKeyboard extends InputMethodService
 
     Historyadapter historyadapter;
     private RecyclerView historyrecs;
-     private final ArrayList<Historymodal> usershisatories = new ArrayList<>();
+    private final ArrayList<Historymodal> usershisatories = new ArrayList<>();
     private ImageView searchimg;
     private ImageView cancelimg;
     private ImageView searchimgdone;
@@ -113,7 +115,7 @@ public class SoftKeyboard extends InputMethodService
     private CompletionInfo[] mCompletions;
     private final StringBuilder mComposing = new StringBuilder();
     private boolean mPredictionOn;
-//    private SettingSesson settingSesson;
+    //    private SettingSesson settingSesson;
     private boolean mCompletionOn;
     private boolean mSound;
     private int mLastDisplayWidth;
@@ -127,7 +129,7 @@ public class SoftKeyboard extends InputMethodService
 
     private LatinKeyboard mCurKeyboard;
     public static String mActiveKeyboard;
-//    private EmojiconsPopup popupWindow = null;
+    //    private EmojiconsPopup popupWindow = null;
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++gifpopupWindow+++++++++++++++++++++++++++++++++
     private Gifgridviewpopup gifpopupWindow = null;
 
@@ -143,7 +145,7 @@ public class SoftKeyboard extends InputMethodService
         mInputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         mWordSeparators = getResources().getString(R.string.word_separators);
 
-      //+++++++++++++++++++++++++need to be tested++++++++++++++++++++++++++++++++++
+        //+++++++++++++++++++++++++need to be tested++++++++++++++++++++++++++++++++++
 //      imagesDir.mkdirs();
 
 
@@ -312,10 +314,29 @@ public class SoftKeyboard extends InputMethodService
                 new ClipDescription("xyz", new String[]{SoftKeyboard.MIME_TYPE_GIF}),
                 null /* linkUrl */);
 
-           InputConnectionCompat.commitContent(
+        InputConnectionCompat.commitContent(
                 getCurrentInputConnection(), getCurrentInputEditorInfo(), inputContentInfoCompat,
                 flag, null);
+
+        // Switch back to the default keyboard
+        switchToDefaultKeyboard();
 //        getCurrentInputConnection().commitText("sdfsd",1);
+    }
+
+    private void switchToDefaultKeyboard() {
+
+        try {
+            ContentResolver resolver = getContentResolver();
+            String defaultKeyboard = Settings.Secure.getString(resolver, Settings.Secure.DEFAULT_INPUT_METHOD);
+            Settings.Secure.putString(resolver, Settings.Secure.ENABLED_INPUT_METHODS, defaultKeyboard);
+            Settings.Secure.putString(resolver, Settings.Secure.DEFAULT_INPUT_METHOD, defaultKeyboard);
+        } catch (Exception e) {
+            Log.e("KeyboardSwitch", "Failed to switch to default keyboard", e);
+            InputMethodManager imeManager = (InputMethodManager) getApplicationContext().getSystemService(INPUT_METHOD_SERVICE);
+            imeManager.showInputMethodPicker();
+        }
+
+
     }
 
     private boolean validatePackageName(@Nullable EditorInfo editorInfo) {
@@ -529,7 +550,7 @@ public class SoftKeyboard extends InputMethodService
                 updateShiftKeyState(attribute);
         }
 //        if (mCurKeyboard == mPashtoLatinKeyboard || mCurKeyboard == mPashtoLatinShiftedKeyboard)
-            mPredictionOn = true;
+        mPredictionOn = true;
         //            db = new DatabaseManager(this);
         historyviewmodel = new Historyviewmodel(getApplication());
         historyviewmodel.getAllWords().observeForever( words ->{
@@ -542,7 +563,7 @@ public class SoftKeyboard extends InputMethodService
             {
                 if( i==0)
                 {
-                     firstword = words.get(i);
+                    firstword = words.get(i);
                     usershisatories.add(words.get(i));
                 }else {
                     if(! (words.get(i).getTitle().equals(firstword.getTitle())) )
@@ -898,7 +919,7 @@ public class SoftKeyboard extends InputMethodService
      */
     private void keyDownUp() {
         Log.e("Here " , "key event");
-      onKey(-111334 , null);
+        onKey(-111334 , null);
 
     }
 
@@ -1334,7 +1355,7 @@ public class SoftKeyboard extends InputMethodService
             }
         }catch (Exception e)
         {
-        Log.e("softkeyboard" , "token not found");
+            Log.e("softkeyboard" , "token not found");
             e.printStackTrace();
 
         }
@@ -1366,7 +1387,7 @@ public class SoftKeyboard extends InputMethodService
 
         historyviewmodel.insert(new Historymodal( searched.getText().toString(), "S", "ww.gosdgf", 1));
 
-            AsyncTask.execute(() -> Log.e("Historymodal", "getLastWord()" + searched.getText().toString()));
+        AsyncTask.execute(() -> Log.e("Historymodal", "getLastWord()" + searched.getText().toString()));
 
     }
 
