@@ -13,6 +13,7 @@ public class SettingSesson {
     private static final String Appendlink="appendlinkyou";
     private static final String Appendgiflink="appendgiflink";
     private static final String ShowTextInsteadOfThumbnail = "show_text_instead_of_thumbnail";
+    private static final String SwitchKeyboardToDefault = "switchKeyboardToDefault";
     private static final String SearchbyStartsEnd="searchbystarts";
     private static final String SearchbyEnd="searchbyend";
     private static final String Minimumcharacters="minimumcharacters";
@@ -43,6 +44,13 @@ public class SettingSesson {
         return pref.getBoolean(ShowTextInsteadOfThumbnail, false);
 //        return Appendlink;
     }
+
+    public boolean switchKeyboardToDefault()
+    {
+        return pref.getBoolean(SwitchKeyboardToDefault, false);
+//        return Appendlink;
+    }
+
 
     public String getSearchbyStartsorEnd() {
         return pref.getString(SearchbyStartsEnd, "S");
@@ -141,6 +149,13 @@ public class SettingSesson {
         editor.putBoolean(ShowTextInsteadOfThumbnail, is_il);
         editor.commit();
     }
+    public void setSwitchKeyboardToDefault(Boolean is_il)
+    {
+        editor.putBoolean(SwitchKeyboardToDefault, is_il);
+        editor.commit();
+    }
+
+
     public void setSearchbystarts( String value)
     {
         editor.putString(SearchbyStartsEnd, value);
