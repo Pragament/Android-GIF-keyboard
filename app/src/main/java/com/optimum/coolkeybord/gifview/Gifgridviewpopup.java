@@ -276,12 +276,10 @@ public class Gifgridviewpopup extends PopupWindow {
         String subcaturl ="https://staticapis.pragament.com/language_learning/gif-data.json";
 
         RequestQueue queue = Volley.newRequestQueue(this.mContext);
-        String selectedlang;
         String selectesearchendwith;
-        if(!settingSesson.getSlelectedlang().equals("no"))
-        {
-            selectedlang = settingSesson.getSlelectedlang();
-            subcaturl = subcaturl+"&languages="+selectedlang+"&";
+        String langCode = settingSesson.getLanguageCode(settingSesson.getLangPref());
+        if (!langCode.equals("en")) {
+            subcaturl = subcaturl+"&languages="+langCode+"&";
         }
         Log.e("selectedlang" , "url"+subcaturl);
         if(settingSesson.getSearchbyStartsorEnd().equals("S"))
@@ -450,12 +448,11 @@ public class Gifgridviewpopup extends PopupWindow {
                 }
             }));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-
-                List<Categoriesmodel> deduped = categoriesmodelArrayList.stream().distinct().collect(Collectors.toList());
-                categoriesmodelArrayList.addAll(deduped);
+                //directly assign the new ArrayList
+                categoriesmodelArrayList = new ArrayList<>(categoriesmodelArrayList.stream().distinct().collect(Collectors.toList()));
             }else {
-                List<Categoriesmodel> deDupStringList = new ArrayList<>(new HashSet<>(categoriesmodelArrayList));
-                categoriesmodelArrayList.addAll(deDupStringList);
+                //directly assign the new ArrayList
+                categoriesmodelArrayList = new ArrayList<>(new HashSet<>(categoriesmodelArrayList));
             }
 
             categoriesrec.setLayoutManager(new LinearLayoutManager(mContext , LinearLayoutManager.HORIZONTAL, false));

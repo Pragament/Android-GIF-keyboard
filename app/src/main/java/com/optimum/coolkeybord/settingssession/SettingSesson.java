@@ -3,6 +3,9 @@ package com.optimum.coolkeybord.settingssession;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class SettingSesson {
     SharedPreferences pref, pref11;
     SharedPreferences.Editor editor, editor1;
@@ -22,6 +25,7 @@ public class SettingSesson {
     private static final String  Showtamil=" showtamil";
     private static final String datesTeps="datasteps";
     private static final String IS_Image="Is Image In";
+    private static final String PREF_LANGUAGE="prefLanguage";
 
     public SettingSesson(Context context) {
         this.context = context;
@@ -218,5 +222,25 @@ public class SettingSesson {
     public void clearAll() {
         editor.clear();
         editor.commit();
+    }
+
+    public void setLangPref(String lang) {
+        editor.putString(PREF_LANGUAGE, lang);
+        editor.commit();
+    }
+
+    public String getLangPref() {
+        return pref.getString(PREF_LANGUAGE, "English");
+    }
+
+    public String getLanguageCode(String language) {
+        Map<String, String> langMap = new HashMap<>();
+        langMap.put("English", "en");
+        langMap.put("Tamil", "ta");
+        langMap.put("Hindi", "hi");
+        langMap.put("Telugu", "te");
+        langMap.put("Kannada", "kn");
+        langMap.put("Malayalam", "ml");
+        return langMap.get(language);
     }
 }
