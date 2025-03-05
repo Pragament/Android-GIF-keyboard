@@ -1,36 +1,28 @@
 package com.optimum.coolkeybord;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.Bundle;
-import android.text.InputFilter;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.optimum.coolkeybord.adapter.CategoriesAdapter;
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.optimum.coolkeybord.adapter.Gifgridviewadapter;
-import com.optimum.coolkeybord.adapter.SearchAdapter;
 import com.optimum.coolkeybord.settingssession.SettingSesson;
-
-import java.util.ArrayList;
 
 public class DictionaryActivity extends AppCompatActivity implements View.OnClickListener {
     private ImageView backimgtogif;
@@ -51,6 +43,7 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
     private CheckBox appendtxttogif;
     private CheckBox switchKeyboard;
     private Gifgridviewadapter gifAdapter;
+    private MaterialAutoCompleteTextView chooseLang;
 //    EditText searchEditText;
 //    Spinner languageSpinner;
 //    ArrayList<String> languages, words;
@@ -67,12 +60,12 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
 //        settings = findViewById(R.id.settings);
         searchbystart = findViewById(R.id.searchbystart);
         searchbycontains = findViewById(R.id.searchbycontains);
-        langcard = findViewById(R.id.langcard);
+//        langcard = findViewById(R.id.langcard);
         starconrd = findViewById(R.id.starconrd);
 
-        showench_ch = findViewById(R.id.showench_ch);
-        showtel_ch = findViewById(R.id.showtel_ch);
-        showtamil_ch = findViewById(R.id.showtamil_ch);
+//        showench_ch = findViewById(R.id.showench_ch);
+//        showtel_ch = findViewById(R.id.showtel_ch);
+//        showtamil_ch = findViewById(R.id.showtamil_ch);
         youtubehcekc = findViewById(R.id.youtubehcekc);
         textinsteadcekc= findViewById(R.id.textinsteadcekc);
         appendtxttogif = findViewById(R.id.appendtxttogif);
@@ -85,6 +78,26 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
         settingspage = findViewById(R.id.settingspage);
         gifviewpagli = findViewById(R.id.gifviewpagli);
         startendcard = findViewById(R.id.startendcard);
+        chooseLang = findViewById(R.id.dmDictionarySelectLang);
+
+        String[] langList = getResources().getStringArray(R.array.languages);
+        ArrayAdapter<String> langAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, langList);
+        chooseLang.setAdapter(langAdapter);
+        chooseLang.setText(settingSesson.getLangPref(), false);
+//        chooseLang.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                chooseLang.showDropDown();
+//            }
+//        });
+
+        chooseLang.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                settingSesson.setLangPref(adapterView.getItemAtPosition(i).toString());
+            }
+        });
+
         if(settingSesson.getSearchbyStartsorEnd().equals("S"))
         {
             searchbystart.setChecked(true);
@@ -114,27 +127,27 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
 //                Toast.makeText(view.getContext(),radioSexButton.getText(),Toast.LENGTH_SHORT).show();
             }
         });
-        showench_ch.setChecked(settingSesson.getShowenglish());
-        showench_ch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                settingSesson.setShowenglish(b);
-            }
-        });
-        showtel_ch.setChecked(settingSesson.getShowtelugu());
-        showtel_ch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                settingSesson.setShowtelugu(b);
-            }
-        });
-        showtamil_ch.setChecked(settingSesson.getShowtamil());
-        showtamil_ch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                settingSesson.setShowtamil(b);
-            }
-        });
+//        showench_ch.setChecked(settingSesson.getShowenglish());
+//        showench_ch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//                settingSesson.setShowenglish(b);
+//            }
+//        });
+//        showtel_ch.setChecked(settingSesson.getShowtelugu());
+//        showtel_ch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//                settingSesson.setShowtelugu(b);
+//            }
+//        });
+//        showtamil_ch.setChecked(settingSesson.getShowtamil());
+//        showtamil_ch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//                settingSesson.setShowtamil(b);
+//            }
+//        });
         increase_char.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
