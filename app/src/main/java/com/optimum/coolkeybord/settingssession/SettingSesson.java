@@ -3,9 +3,6 @@ package com.optimum.coolkeybord.settingssession;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class SettingSesson {
     SharedPreferences pref, pref11;
     SharedPreferences.Editor editor, editor1;
@@ -23,9 +20,11 @@ public class SettingSesson {
     private static final String Showenglish="showenglish";
     private static final String Showtelugu="showtelugu";
     private static final String  Showtamil=" showtamil";
+    private static final String  Showhindi=" showhindi";
+    private static final String  Showkannada=" showkannada";
+    private static final String  Showmalayalam=" showmalayalam";
     private static final String datesTeps="datasteps";
     private static final String IS_Image="Is Image In";
-    private static final String PREF_LANGUAGE="prefLanguage";
 
     public SettingSesson(Context context) {
         this.context = context;
@@ -68,7 +67,6 @@ public class SettingSesson {
     }
 
     public boolean getShowenglish() {
-
         return pref.getBoolean(Showenglish, true);
     }
     public void setShowenglish( boolean value)
@@ -100,6 +98,27 @@ public class SettingSesson {
         // commit changes
         editor.commit();
     }
+    public boolean getShowHindi() {
+        return pref.getBoolean(Showhindi, false);
+    }
+    public void setShowHindi( boolean value) {
+        editor.putBoolean(Showhindi, value);
+        editor.commit();
+    }
+    public boolean getShowKannada() {
+        return pref.getBoolean(Showkannada, false);
+    }
+    public void setShowKannada( boolean value) {
+        editor.putBoolean(Showkannada, value);
+        editor.commit();
+    }
+    public boolean getShowMalayalam() {
+        return pref.getBoolean(Showmalayalam, false);
+    }
+    public void setShowMalayalam( boolean value) {
+        editor.putBoolean(Showmalayalam, value);
+        editor.commit();
+    }
     public String getSlelectedlang() {
         String slectedland = "no";
         if(getShowenglish())
@@ -111,21 +130,43 @@ public class SettingSesson {
         {
             if(slectedland.contains("en") )
             {
-                slectedland = "en"+",tel";
+                slectedland = "en"+",te";
             }else {
-                slectedland = "tel";
+                slectedland = "te";
             }
 
 //            return pref.getBoolean(Showtelugu, false);
         }
         if(getShowtamil() ) {
-            if(slectedland.contains("en") || slectedland.contains("tel"))
+            if(slectedland.contains("en") || slectedland.contains("te"))
             {
                 slectedland = slectedland+",ta";
             }else {
                 slectedland = "ta";
             }
-
+        }
+        if(getShowHindi() ) {
+            if(slectedland.contains("en") || slectedland.contains("te") || slectedland.contains("ta")) {
+                slectedland = slectedland+",hi";
+            }else {
+                slectedland = "hi";
+            }
+        }
+        if(getShowKannada() ) {
+            if(slectedland.contains("en") || slectedland.contains("te") || slectedland.contains("ta")
+                    || slectedland.contains("hi")) {
+                slectedland = slectedland+",kn";
+            }else {
+                slectedland = "kn";
+            }
+        }
+        if(getShowMalayalam() ) {
+            if(slectedland.contains("en") || slectedland.contains("te") || slectedland.contains("ta")
+                    || slectedland.contains("hi") || slectedland.contains("kn")) {
+                slectedland = slectedland+",ml";
+            }else {
+                slectedland = "ml";
+            }
         }
         return slectedland;
     }
@@ -222,25 +263,5 @@ public class SettingSesson {
     public void clearAll() {
         editor.clear();
         editor.commit();
-    }
-
-    public void setLangPref(String lang) {
-        editor.putString(PREF_LANGUAGE, lang);
-        editor.commit();
-    }
-
-    public String getLangPref() {
-        return pref.getString(PREF_LANGUAGE, "English");
-    }
-
-    public String getLanguageCode(String language) {
-        Map<String, String> langMap = new HashMap<>();
-        langMap.put("English", "en");
-        langMap.put("Tamil", "ta");
-        langMap.put("Hindi", "hi");
-        langMap.put("Telugu", "te");
-        langMap.put("Kannada", "kn");
-        langMap.put("Malayalam", "ml");
-        return langMap.get(language);
     }
 }
