@@ -10,6 +10,7 @@ import android.content.ClipDescription;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
@@ -1297,18 +1298,26 @@ public class SoftKeyboard extends InputMethodService
                             .into(new SimpleTarget<GifDrawable>() {
 
                                 @Override
+                                public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                                    InputConnection inputConnection = getCurrentInputConnection();
+                                    if (isLocalGifSupported()) {
+                                        if (sessionsx) {
+                                            inputConnection.commitText(gifitem.getYoutubeUrl(), 15);
+                                            inputConnection.finishComposingText();
+                                        } else {
+                                            inputConnection.commitText(gifitem.getMultilineText(), 15);
+                                            inputConnection.finishComposingText();
+                                        }
+                                    } else {
+                                        inputConnection.commitText(gifitem.getYoutubeUrl() + "\n" + gifitem.getMultilineText() ,15);
+                                        inputConnection.finishComposingText();
+                                    }
+                                }
+
+                                @Override
                                 public void onResourceReady(@NonNull GifDrawable gifDrawable, @Nullable Transition<? super GifDrawable> transition) {
                                     InputConnection ic = getCurrentInputConnection();
-
-                                    String[] mimeTypes = EditorInfoCompat.getContentMimeTypes(getCurrentInputEditorInfo());
-                                    boolean localgifSupported = false;
-                                    for (String mimeType : mimeTypes) {
-                                        if (ClipDescription.compareMimeTypes(mimeType, "image/gif")) {
-                                            localgifSupported = true;
-
-                                        }
-                                    }
-                                    if (localgifSupported) {
+                                    if (isLocalGifSupported()) {
                                         if(sessionsx)
                                         {
 
@@ -1365,6 +1374,17 @@ public class SoftKeyboard extends InputMethodService
 
         }
 
+    }
+
+    private boolean isLocalGifSupported() {
+        String[] mimeTypes = EditorInfoCompat.getContentMimeTypes(getCurrentInputEditorInfo());
+        boolean localgifSupported = false;
+        for (String mimeType : mimeTypes) {
+            if (ClipDescription.compareMimeTypes(mimeType, "image/gif")) {
+                localgifSupported = true;
+            }
+        }
+        return localgifSupported;
     }
 
     @Override

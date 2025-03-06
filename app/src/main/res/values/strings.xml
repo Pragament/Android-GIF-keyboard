@@ -49,4 +49,13 @@
     <string name="show_tamil_text">Show tamil text</string>
     <string name="append_text_to_gif">Append text to GIF</string>
     <string name="search_gif_sub_or_categories">Search gif sub or categories</string>
+
+    <string-array name="languages">
+        <item>English</item>
+        <item>Tamil</item>
+        <item>Hindi</item>
+        <item>Telugu</item>
+        <item>Kannada</item>
+        <item>Malayalam</item>
+    </string-array>
 </resources>
