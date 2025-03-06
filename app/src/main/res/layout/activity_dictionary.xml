@@ -238,87 +238,101 @@
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
+                    android:id="@+id/langcard"
                 app:cardCornerRadius="5dp"
                 android:elevation="5dp"
                 app:cardElevation="5dp"
                 android:layout_margin="5dp"
+                app:cardUseCompatPadding="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_margin="5dp"
-                    app:startIconDrawable="@drawable/ic_language_24dp"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:id="@+id/lanradgroupli"
+                    app:cardCornerRadius="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                        android:textColor="@color/black"
-                        android:inputType="none"
-                        android:id="@+id/dmDictionarySelectLang"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint=""/>
+                    <CheckBox
 
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:layoutDirection="rtl"
+                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:text="@string/show_english_text"
+                        android:id="@+id/showench_ch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </CheckBox>
+
+                    <CheckBox
+
+                        android:layoutDirection="rtl"
+                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:text="@string/show_tamil_text"
+                        android:id="@+id/showtamil_ch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </CheckBox>
+
+                    <CheckBox
+
+                        android:layoutDirection="rtl"
+                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:text="@string/show_hindi_text"
+                        android:id="@+id/showhindi_ch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </CheckBox>
+
+                    <CheckBox
+
+                        android:layoutDirection="rtl"
+                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:text="@string/show_telugu_text"
+                        android:id="@+id/showtel_ch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </CheckBox>
+
+                    <CheckBox
+
+                        android:layoutDirection="rtl"
+                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:text="@string/show_kannada_text"
+                        android:id="@+id/showkannada_ch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </CheckBox>
+
+                    <CheckBox
+
+                        android:layoutDirection="rtl"
+                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:text="@string/show_malayalam_text"
+                        android:id="@+id/showmalayalam_ch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </CheckBox>
+                </LinearLayout>
 
             </androidx.cardview.widget.CardView>
-
-<!--            <androidx.cardview.widget.CardView-->
-<!--                    android:id="@+id/langcard"-->
-<!--                app:cardCornerRadius="5dp"-->
-<!--                android:elevation="5dp"-->
-<!--                app:cardElevation="5dp"-->
-<!--                android:layout_margin="5dp"-->
-<!--                app:cardUseCompatPadding="true"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content">-->
-<!--                <LinearLayout-->
-<!--                    android:orientation="vertical"-->
-<!--                    android:id="@+id/lanradgroupli"-->
-<!--                    app:cardCornerRadius="5dp"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content">-->
-
-<!--                    <CheckBox-->
-
-<!--                        android:layoutDirection="rtl"-->
-<!--                        android:textColor="@color/black"-->
-<!--                        android:textAlignment="center"-->
-<!--                        android:textSize="18sp"-->
-<!--                        android:text="@string/show_english_text"-->
-<!--                        android:id="@+id/showench_ch"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content">-->
-
-<!--                    </CheckBox>-->
-<!--                    <CheckBox-->
-
-<!--                        android:layoutDirection="rtl"-->
-<!--                        android:textColor="@color/black"-->
-<!--                        android:textAlignment="center"-->
-<!--                        android:textSize="18sp"-->
-<!--                        android:text="@string/show_telugu_text"-->
-<!--                        android:id="@+id/showtel_ch"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content">-->
-
-<!--                    </CheckBox>-->
-<!--                    <CheckBox-->
-
-<!--                        android:layoutDirection="rtl"-->
-<!--                        android:textColor="@color/black"-->
-<!--                        android:textAlignment="center"-->
-<!--                        android:textSize="18sp"-->
-<!--                        android:text="@string/show_tamil_text"-->
-<!--                        android:id="@+id/showtamil_ch"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content">-->
-
-<!--                    </CheckBox>-->
-<!--                </LinearLayout>-->
-
-<!--            </androidx.cardview.widget.CardView>-->
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

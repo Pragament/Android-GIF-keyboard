@@ -276,10 +276,12 @@ public class Gifgridviewpopup extends PopupWindow {
         String subcaturl ="https://staticapis.pragament.com/language_learning/gif-data.json";
 
         RequestQueue queue = Volley.newRequestQueue(this.mContext);
+        String selectedlang;
         String selectesearchendwith;
-        String langCode = settingSesson.getLanguageCode(settingSesson.getLangPref());
-        if (!langCode.equals("en")) {
-            subcaturl = subcaturl+"&languages="+langCode+"&";
+        if(!settingSesson.getSlelectedlang().equals("no"))
+        {
+            selectedlang = settingSesson.getSlelectedlang();
+            subcaturl = subcaturl+"&languages="+selectedlang+"&";
         }
         Log.e("selectedlang" , "url"+subcaturl);
         if(settingSesson.getSearchbyStartsorEnd().equals("S"))
