@@ -273,7 +273,8 @@ public class Gifgridviewpopup extends PopupWindow {
         progresbarfull.setIndeterminate(true);
         settingSesson = new SettingSesson(mContext);
         //String subcaturl ="https://d9.technikh.com/index.php/api/v1/gif/search/"+searchtext+"?a=b";
-        String subcaturl ="https://staticapis.pragament.com/language_learning/gif-data.json";
+        //String subcaturl ="https://staticapis.pragament.com/language_learning/gif-data.json";
+        String subcaturl ="https://expressjs-api-chat-keyboard.onrender.com/api/v1/items?searchtext="+searchtext+"&a=b";
 
         RequestQueue queue = Volley.newRequestQueue(this.mContext);
         String selectedlang;
@@ -552,7 +553,8 @@ public class Gifgridviewpopup extends PopupWindow {
       SettingSesson settingSesson =  new SettingSesson(mContext);
         RequestQueue queue = Volley.newRequestQueue(mContext);
         //String subcaturl ="https://d9.technikh.com/index.php/api/v1/gif/search/all?sub-category-id="+subcategoryid+"&languages="+ settingSesson.getSlelectedlang() +"&current_page="+pagenumber;
-        String subcaturl ="https://staticapis.pragament.com/language_learning/gif-data.json";
+        //String subcaturl ="https://staticapis.pragament.com/language_learning/gif-data.json";
+        String subcaturl ="https://expressjs-api-chat-keyboard.onrender.com/api/v1/items?sub-category-id="+subcategoryid+"&languages="+ settingSesson.getSlelectedlang() +"&current_page="+pagenumber;
       if(pagenumber ==1)
       {
           subgifdataArrayList.clear();
