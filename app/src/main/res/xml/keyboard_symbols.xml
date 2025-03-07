@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="10%p"
+    android:horizontalGap="2dp"
+    android:verticalGap="2dp"
+    android:keyHeight="52dp"
+    android:keyTextColor="#000000"
+    android:keyBackground="@drawable/key_background"
+    >
+    <!-- First row (numbers) -->
+    <Row>
+        <Key android:codes="49" android:keyLabel="1" android:keyEdgeFlags="left"/>
+        <Key android:codes="50" android:keyLabel="2"/>
+        <Key android:codes="51" android:keyLabel="3"/>
+        <Key android:codes="52" android:keyLabel="4"/>
+        <Key android:codes="53" android:keyLabel="5"/>
+        <Key android:codes="54" android:keyLabel="6"/>
+        <Key android:codes="55" android:keyLabel="7"/>
+        <Key android:codes="56" android:keyLabel="8"/>
+        <Key android:codes="57" android:keyLabel="9"/>
+        <Key android:codes="48" android:keyLabel="0" android:keyEdgeFlags="right"/>
+    </Row>
+
+    <!-- Second row (symbols) -->
+    <Row>
+        <Key android:codes="64" android:keyLabel="@" android:keyEdgeFlags="left"/>
+        <Key android:codes="35" android:keyLabel="#"/>
+        <Key android:codes="36" android:keyLabel="$"/>
+        <Key android:codes="95" android:keyLabel="_"/>
+        <Key android:codes="38" android:keyLabel="&amp;"/>
+        <Key android:codes="45" android:keyLabel="-"/>
+        <Key android:codes="43" android:keyLabel="+"/>
+        <Key android:codes="40" android:keyLabel="("/>
+        <Key android:codes="41" android:keyLabel=")"/>
+        <Key android:codes="47" android:keyLabel="/" android:keyEdgeFlags="right"/>
+    </Row>
+
+    <!-- Third row (more symbols) -->
+    <Row>
+        <Key android:codes="-12" android:keyLabel="=\&lt;" android:keyWidth="10%p" android:keyEdgeFlags="left"/>
+        <Key android:codes="42" android:keyLabel="*"/>
+        <Key android:codes="34" android:keyLabel="&quot;"/>
+        <Key android:codes="39" android:keyLabel="'"/>
+        <Key android:codes="58" android:keyLabel=":"/>
+        <Key android:codes="59" android:keyLabel=";"/>
+        <Key android:codes="33" android:keyLabel="!"/>
+        <Key android:codes="63" android:keyLabel="?"/>
+        <Key android:codes="-5" android:keyIcon="@drawable/ic_backspace" android:isRepeatable="true" android:keyWidth="10%p" android:keyEdgeFlags="right"/>
+    </Row>
+
+    <!-- Fourth row (ABC + language + space + punctuation + return) -->
+    <Row android:rowEdgeFlags="bottom">
+        <Key android:codes="-10" android:keyLabel="ABC" android:keyWidth="15%p" android:keyEdgeFlags="left"/>
+        <Key android:codes="-13" android:keyLabel="¹²³₄" android:keyWidth="10%p"/>
+        <Key android:codes="32" android:keyLabel=" " android:keyWidth="50%p" android:isRepeatable="true"/>
+        <Key android:codes="46" android:keyLabel="." android:keyWidth="10%p"/>
+        <Key android:codes="-4" android:keyIcon="@drawable/ic_return" android:keyWidth="15%p" android:keyEdgeFlags="right"/>
+    </Row>
+
+</Keyboard>
