@@ -50,6 +50,7 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
     private CheckBox textinsteadcekc;
     private CheckBox appendtxttogif;
     private CheckBox switchKeyboard;
+    private CheckBox searchScreenByDefault;
     private Gifgridviewadapter gifAdapter;
 //    EditText searchEditText;
 //    Spinner languageSpinner;
@@ -80,6 +81,7 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
         textinsteadcekc= findViewById(R.id.textinsteadcekc);
         appendtxttogif = findViewById(R.id.appendtxttogif);
         switchKeyboard = findViewById(R.id.switchKeyboard);
+        searchScreenByDefault = findViewById(R.id.searchScreenByDefault);
 
         increase_char = findViewById(R.id.increase_char);
         minout_txt = findViewById(R.id.minout_txt);
@@ -97,6 +99,7 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
         youtubehcekc.setChecked(settingSesson.getAppendlink());
         appendtxttogif.setChecked(settingSesson.getgiflink());
         switchKeyboard.setChecked(settingSesson.switchKeyboardToDefault());
+        searchScreenByDefault.setChecked(settingSesson.getShowSearchScreenByDefault());
         textinsteadcekc.setChecked(settingSesson.showTextInsteadOfThumbnail());
         minout_txt.setText(String.valueOf(Integer.parseInt(settingSesson.getMinimumcharacters())));
         settingSesson.setMinimumcharacters(minout_txt.getText().toString());
@@ -198,6 +201,13 @@ public class DictionaryActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 settingSesson.setSwitchKeyboardToDefault(b);
+            }
+        });
+
+        searchScreenByDefault.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                settingSesson.setShowSearchScreenByDefault(b);
             }
         });
 

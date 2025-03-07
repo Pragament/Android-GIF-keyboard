@@ -23,6 +23,7 @@ public class SettingSesson {
     private static final String  Showhindi=" showhindi";
     private static final String  Showkannada=" showkannada";
     private static final String  Showmalayalam=" showmalayalam";
+    private static final String  ShowSearchScreenByDefault=" showsearchscreenbydefault";
     private static final String datesTeps="datasteps";
     private static final String IS_Image="Is Image In";
 
@@ -215,6 +216,16 @@ public class SettingSesson {
         // commit changes
         editor.commit();
     }
+
+    public void setShowSearchScreenByDefault(boolean value) {
+        editor.putBoolean(ShowSearchScreenByDefault, value);
+        editor.commit();
+    }
+
+    public boolean getShowSearchScreenByDefault() {
+        return pref.getBoolean(ShowSearchScreenByDefault, false);
+    }
+
     public void setLaunguages(Boolean isend ,Boolean istelgu ,Boolean istamil)
     {
         editor.putBoolean(Showenglish, isend);
