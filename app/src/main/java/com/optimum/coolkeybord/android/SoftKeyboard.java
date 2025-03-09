@@ -18,8 +18,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.InputType;
@@ -58,6 +59,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.android.material.textview.MaterialTextView;
 import com.google.gson.Gson;
 import com.optimum.coolkeybord.DictionaryActivity;
 import com.optimum.coolkeybord.R;
@@ -70,12 +72,24 @@ import com.optimum.coolkeybord.models.Historymodal;
 import com.optimum.coolkeybord.models.RecentGifEntity;
 import com.optimum.coolkeybord.settingssession.SettingSesson;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileOutputStream;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 //import timber.log.Timber;
 
@@ -139,6 +153,10 @@ public class SoftKeyboard extends InputMethodService
 
     // Add new keyboard field
     private LatinKeyboard mSymbolsKeyboard;
+    private MaterialTextView tvSuggestion1, tvSuggestion2, tvSuggestion3;
+
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private Runnable workRunnable;
 
     @Override
     public void onCreate() {
@@ -190,6 +208,9 @@ public class SoftKeyboard extends InputMethodService
 //        mInputView = (LatinKeyboardView) vx.findViewById(R.id.keyboardxx);
         mInputView =  vx.findViewById(R.id.keyboardxx);
         keyboardxxview = vx.findViewById(R.id.keyboard);
+        tvSuggestion1 = vx.findViewById(R.id.tvSuggestion1);
+        tvSuggestion2 = vx.findViewById(R.id.tvSuggestion2);
+        tvSuggestion3 = vx.findViewById(R.id.tvSuggestion3);
 //        settingSesson = new SettingSesson(vx.getContext());
         settingsimg.setOnClickListener(view -> {
 //                getCurrentInputConnection().commitText("",1);
@@ -210,6 +231,43 @@ public class SoftKeyboard extends InputMethodService
                     cancelimg.setVisibility(View.VISIBLE);
                     searchimgdone.setVisibility(View.GONE);
                 }else {
+                    if (workRunnable != null) {
+                        handler.removeCallbacks(workRunnable);
+                    }
+
+                    workRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            fetchSuggestion(s.toString(), new SuggestionListener() {
+                                @Override
+                                public void onSuggestionReceived(ArrayList<String> suggestions) {
+                                    switch (suggestions.size()) {
+                                        case 1:
+                                            tvSuggestion1.setText("");
+                                            tvSuggestion2.setText(suggestions.get(0));
+                                            tvSuggestion3.setText("");
+                                            break;
+                                        case 2:
+                                            tvSuggestion1.setText(suggestions.get(1));
+                                            tvSuggestion2.setText(suggestions.get(0));
+                                            tvSuggestion3.setText("");
+                                            break;
+                                        case 3:
+                                            tvSuggestion1.setText(suggestions.get(1));
+                                            tvSuggestion2.setText(suggestions.get(0));
+                                            tvSuggestion3.setText(suggestions.get(2));
+                                            break;
+                                        default:
+                                            tvSuggestion1.setText("");
+                                            tvSuggestion2.setText("");
+                                            tvSuggestion3.setText("");
+                                            break;
+                                    }
+                                }
+                            });
+                        }
+                    };
+                    handler.postDelayed(workRunnable, 300);
                     cancelimg.setVisibility(View.GONE);
                     searchimgdone.setVisibility(View.VISIBLE);
                 }
@@ -266,8 +324,71 @@ public class SoftKeyboard extends InputMethodService
             return false;
         });
 
+        String oldWord = searched.getText().toString();
+
         setLatinKeyboard(getSelectedSubtype());
+        tvSuggestion1.setOnClickListener(view -> {
+            searched.setText(oldWord.replace(oldWord, tvSuggestion1.getText()));
+            searched.setSelection(tvSuggestion1.getText().length());
+        });
+        tvSuggestion2.setOnClickListener(view -> {
+            searched.setText(oldWord.replace(oldWord, tvSuggestion2.getText()));
+            searched.setSelection(tvSuggestion2.getText().length());
+        });
+        tvSuggestion3.setOnClickListener(view -> {
+            searched.setText(oldWord.replace(oldWord, tvSuggestion3.getText()));
+            searched.setSelection(tvSuggestion3.getText().length());
+        });
+
         return vx;
+    }
+
+    private void fetchSuggestion(String query, SuggestionListener listener) {
+        if (!query.trim().isEmpty()) {
+            Request request = new Request.Builder()
+                    .url("https://api.datamuse.com/sug?s=" + query)
+                    .build();
+
+            OkHttpClient client = new OkHttpClient();
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    listener.onSuggestionReceived(new ArrayList<>());
+                    Log.d("WordSuggestions", "onFailure: " + e.getLocalizedMessage());
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    if (!response.isSuccessful() || response.body() == null) {
+                        listener.onSuggestionReceived(new ArrayList<>());
+                        return;
+                    }
+
+                    ArrayList<String> topSuggestions = new ArrayList<>();
+                    try {
+                        String responseBody = response.body().string();
+                        JSONArray jsonArray = new JSONArray(responseBody);
+
+                        for (int i = 0; i < Math.min(jsonArray.length(), 3); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            String word = jsonObject.getString("word");
+                            topSuggestions.add(word);
+                        }
+
+                        new Handler(Looper.getMainLooper()).post(() -> listener.onSuggestionReceived(topSuggestions));
+
+                    } catch (JSONException e) {
+                        Log.d("WordSuggestions", "onResponse: " + e.getLocalizedMessage());
+                    }
+                }
+            });
+        } else {
+            listener.onSuggestionReceived(new ArrayList<>());
+        }
+    }
+
+    private interface SuggestionListener {
+        void onSuggestionReceived(ArrayList<String> suggestions);
     }
 
     private void doCommitContent(@NonNull File file) {
