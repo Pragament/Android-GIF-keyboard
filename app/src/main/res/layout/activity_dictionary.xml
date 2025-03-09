@@ -105,6 +105,23 @@
 
                     </CheckBox>
 
+                    <CheckBox
+
+                        android:onClick="onClick"
+                        android:layout_gravity="center_horizontal"
+                        android:button="@null"
+                        android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+                        android:textColor="@color/black"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:text="Show search screen by default"
+                        android:id="@+id/searchScreenByDefault"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:ignore="UsingOnClickInXml">
+
+                    </CheckBox>
+
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>

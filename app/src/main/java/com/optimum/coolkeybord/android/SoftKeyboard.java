@@ -242,6 +242,7 @@ public class SoftKeyboard extends InputMethodService
                 searched.setVisibility(View.VISIBLE);
                 cancelimg.setVisibility(View.VISIBLE);
                 searchimg.setVisibility(View.GONE);
+                searched.requestFocus();
             }
             return true;
         });
@@ -266,8 +267,6 @@ public class SoftKeyboard extends InputMethodService
         });
 
         setLatinKeyboard(getSelectedSubtype());
-        showGifGridview("" ,historyviewmodel);
-
         return vx;
     }
 
@@ -440,23 +439,23 @@ public class SoftKeyboard extends InputMethodService
         return mCandidateView;
     }
 
-    @Override
-    public void onWindowShown() {
-//        onKey(-111334, null);
-        new CountDownTimer(300, 100) {
-
-            public void onTick(long millisUntilFinished) {
-                Log.e("Counter" , "tickin"+"seconds remaining: " + millisUntilFinished / 1000);
-//                textView.setText("seconds remaining: " + millisUntilFinished / 1000);
-            }
-
-            public void onFinish() {
-                showGifGridview("" ,historyviewmodel);
-            }
-        }.start();
-
-        super.onWindowShown();
-    }
+//    @Override
+//    public void onWindowShown() {
+////        onKey(-111334, null);
+//        new CountDownTimer(300, 100) {
+//
+//            public void onTick(long millisUntilFinished) {
+//                Log.e("Counter" , "tickin"+"seconds remaining: " + millisUntilFinished / 1000);
+////                textView.setText("seconds remaining: " + millisUntilFinished / 1000);
+//            }
+//
+//            public void onFinish() {
+//                handleScreenUi();
+//            }
+//        }.start();
+//
+//        super.onWindowShown();
+//    }
 
     /**
      * This is the main point where we do our initialization of the input method
@@ -624,6 +623,8 @@ public class SoftKeyboard extends InputMethodService
 
         // Apply the selected keyboard to the input view.
         setLatinKeyboard(mCurKeyboard);
+        hideGifPopupWindow();
+        handleScreenUi();
     }
 
     /**
@@ -649,7 +650,7 @@ public class SoftKeyboard extends InputMethodService
         if (mInputView != null) {
             mInputView.closing();
         }
-
+        hideGifPopupWindow();
 
     }
 
@@ -672,7 +673,15 @@ public class SoftKeyboard extends InputMethodService
                 gifSupported = true;
             }
         }
-
+        handleScreenUi();
+        if(cancelimg.getVisibility() == View.GONE && searched.getVisibility() == View.INVISIBLE)
+        {
+            searched.setVisibility(View.VISIBLE);
+            cancelimg.setVisibility(View.VISIBLE);
+            searchimg.setVisibility(View.GONE);
+            searched.requestFocus();
+            searched.setSelection(searched.getText().length());
+        }
     }
 
     /**
@@ -1438,6 +1447,28 @@ public class SoftKeyboard extends InputMethodService
         return inputString.substring(inputString.lastIndexOf(" ") + 1);
     }
 
+    private void handleScreenUi() {
+        if (settingSesson.getShowSearchScreenByDefault()){
+            if(cancelimg.getVisibility() == View.GONE && searched.getVisibility() == View.INVISIBLE)
+            {
+                searched.setVisibility(View.VISIBLE);
+                cancelimg.setVisibility(View.VISIBLE);
+                searchimg.setVisibility(View.GONE);
+                searched.requestFocus();
+                searched.setSelection(searched.getText().length());
+            }
+            hideGifPopupWindow();
+        } else {
+            if (gifpopupWindow == null || !gifpopupWindow.isShowing()) {
+                showGifGridview("", historyviewmodel);
+            }
+        }
+    }
 
+    private void hideGifPopupWindow() {
+        if (gifpopupWindow != null && gifpopupWindow.isShowing()) {
+            gifpopupWindow.dismiss();
+        }
+    }
 
 }
