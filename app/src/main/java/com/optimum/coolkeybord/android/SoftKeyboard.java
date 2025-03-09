@@ -1,4 +1,3 @@
-
 package com.optimum.coolkeybord.android;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
@@ -138,6 +137,9 @@ public class SoftKeyboard extends InputMethodService
     private File imagesDir;
     //    private FrameLayout vx;
 
+    // Add new keyboard field
+    private LatinKeyboard mSymbolsKeyboard;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -155,15 +157,14 @@ public class SoftKeyboard extends InputMethodService
     @Override
     public void onInitializeInterface() {
         if (mQwertyKeyboard != null) {
-            // Configuration changes can happen after the keyboard gets recreated,
-            // so we need to be able to re-build the keyboards if the available
-            // space has changed.
             int displayWidth = getMaxWidth();
             if (displayWidth == mLastDisplayWidth) return;
             mLastDisplayWidth = displayWidth;
         }
         settingSesson = new SettingSesson(this);
         mQwertyKeyboard = new LatinKeyboard(this, R.xml.qwerty);
+        // symbols keyboard
+        mSymbolsKeyboard = new LatinKeyboard(this, R.xml.keyboard_symbols);
     }
 
     /**
@@ -997,6 +998,20 @@ public class SoftKeyboard extends InputMethodService
             // Question mark.
             mComposing.append("\u061F");
             getCurrentInputConnection().setComposingText(mComposing, 1);
+        } else if (primaryCode == -10) {
+            //  keyboard layout switch
+            if (mCurKeyboard == mSymbolsKeyboard) {
+                // Switch to QWERTY
+                mCurKeyboard = mQwertyKeyboard;
+            } else {
+                // Switch to Symbols
+                mCurKeyboard = mSymbolsKeyboard;
+            }
+            // Apply the keyboard change
+            if (mInputView != null) {
+                mInputView.setKeyboard(mCurKeyboard);
+                keyboardxxview.setKeyboard(mCurKeyboard);
+            }
         } else {
             ///++++++++++++++++++++++++++++++++++++++++After key presse and it's character+++
 
