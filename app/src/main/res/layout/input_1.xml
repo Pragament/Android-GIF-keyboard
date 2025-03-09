@@ -196,6 +196,25 @@
             android:popupLayout="@layout/keyboard_popup_layout" />
         <!--        android:popupLayout="@layout/keyboard_popup_layout"-->
         <!--        xmlns:android="http://schemas.android.com/apk/res/android" />-->
+
+    <com.google.android.material.textview.MaterialTextView
+        android:background="@color/white"
+        android:textColor="@color/black"
+        android:id="@+id/tvRealTimeSearchLoading"
+        android:textSize="18sp"
+        android:visibility="gone"
+        android:gravity="center"
+        android:text="Searching Gif..."
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:visibility="gone"
+        android:background="@color/white"
+        android:id="@+id/rvRealTimeSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
         <com.optimum.coolkeybord.android.LatinKeyboardView
             android:visibility="gone"
             android:id="@+id/keyboard"
