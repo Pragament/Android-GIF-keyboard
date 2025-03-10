@@ -52,9 +52,13 @@ import androidx.core.content.FileProvider;
 import androidx.core.view.inputmethod.EditorInfoCompat;
 import androidx.core.view.inputmethod.InputConnectionCompat;
 import androidx.core.view.inputmethod.InputContentInfoCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -63,10 +67,12 @@ import com.google.android.material.textview.MaterialTextView;
 import com.google.gson.Gson;
 import com.optimum.coolkeybord.DictionaryActivity;
 import com.optimum.coolkeybord.R;
+import com.optimum.coolkeybord.adapter.Gifgridviewadapter;
 import com.optimum.coolkeybord.adapter.Historyadapter;
 import com.optimum.coolkeybord.database.Dao;
 import com.optimum.coolkeybord.database.Historyviewmodel;
 import com.optimum.coolkeybord.gifview.Gifgridviewpopup;
+import com.optimum.coolkeybord.listners.RecyclerItemClickListener;
 import com.optimum.coolkeybord.models.Gifdata;
 import com.optimum.coolkeybord.models.Historymodal;
 import com.optimum.coolkeybord.models.RecentGifEntity;
@@ -154,9 +160,12 @@ public class SoftKeyboard extends InputMethodService
     // Add new keyboard field
     private LatinKeyboard mSymbolsKeyboard;
     private MaterialTextView tvSuggestion1, tvSuggestion2, tvSuggestion3;
+    private MaterialTextView tvRealTimeSearchLoading;
+    private RecyclerView rvRealTimeSearch;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private Runnable workRunnable;
+    private ArrayList<Gifdata> realTimeSearchList;
 
     @Override
     public void onCreate() {
@@ -211,6 +220,8 @@ public class SoftKeyboard extends InputMethodService
         tvSuggestion1 = vx.findViewById(R.id.tvSuggestion1);
         tvSuggestion2 = vx.findViewById(R.id.tvSuggestion2);
         tvSuggestion3 = vx.findViewById(R.id.tvSuggestion3);
+        rvRealTimeSearch = vx.findViewById(R.id.rvRealTimeSearch);
+        tvRealTimeSearchLoading = vx.findViewById(R.id.tvRealTimeSearchLoading);
 //        settingSesson = new SettingSesson(vx.getContext());
         settingsimg.setOnClickListener(view -> {
 //                getCurrentInputConnection().commitText("",1);
@@ -238,6 +249,7 @@ public class SoftKeyboard extends InputMethodService
                     workRunnable = new Runnable() {
                         @Override
                         public void run() {
+                            realTimeSearch(s.toString());
                             fetchSuggestion(s.toString(), new SuggestionListener() {
                                 @Override
                                 public void onSuggestionReceived(ArrayList<String> suggestions) {
@@ -340,7 +352,121 @@ public class SoftKeyboard extends InputMethodService
             searched.setSelection(tvSuggestion3.getText().length());
         });
 
+        rvRealTimeSearch.addOnItemTouchListener(new RecyclerItemClickListener(this, rvRealTimeSearch, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                InputConnection ic = getCurrentInputConnection();
+                Gifdata gifdata = realTimeSearchList.get(position);
+                if (isLocalGifSupported()) {
+                    if(settingSesson.getAppendlink()) {
+
+                        ic.commitText(gifdata.getYoutubeUrl()  ,15);
+                        ic.finishComposingText();
+                    }else  if(settingSesson.getgiflink()) {
+                        ic.commitText(gifdata.getMultilineText()  ,15);
+                        ic.finishComposingText();
+                    }
+                } else {
+                    ic.commitText(gifdata.getYoutubeUrl() + "\n" +gifdata.getMultilineText() ,15);
+                    ic.finishComposingText();
+                }
+
+                Glide.with(SoftKeyboard.this).asGif()
+                        .load(gifdata.getGif())
+                        .into(new SimpleTarget<GifDrawable>() {
+                            @Override
+                            public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                                InputConnection inputConnection = getCurrentInputConnection();
+                                if (isLocalGifSupported()) {
+                                    if (settingSesson.getAppendlink()) {
+                                        inputConnection.commitText(gifdata.getYoutubeUrl(), 15);
+                                        inputConnection.finishComposingText();
+                                    } else {
+                                        inputConnection.commitText(gifdata.getMultilineText(), 15);
+                                        inputConnection.finishComposingText();
+                                    }
+                                } else {
+                                    inputConnection.commitText(gifdata.getYoutubeUrl() + "\n" + gifdata.getMultilineText() ,15);
+                                    inputConnection.finishComposingText();
+                                }
+                            }
+
+                            @Override
+                            public void onResourceReady(@NonNull GifDrawable resource, @Nullable Transition<? super GifDrawable> transition) {
+                                ByteBuffer byteBuffer = resource.getBuffer().duplicate();
+                                FileOutputStream output;
+                                try {
+                                    imagesDir = new File(getFilesDir(), "sendgifs");
+                                    if (!(imagesDir.exists())) {
+                                        imagesDir.mkdir();
+                                    }
+                                    mGifFile = File.createTempFile("gifitem", ".gif", imagesDir);
+                                    output = new FileOutputStream(mGifFile);
+                                    byteBuffer.rewind();
+                                    byte[] bytes = new byte[byteBuffer.remaining()];
+                                    byteBuffer.get(bytes);
+                                    output.write(bytes);
+                                    output.close();
+                                    SoftKeyboard.this.doCommitContent(mGifFile);
+
+
+                                } catch (Exception e) {
+                                    Log.d("RealTimeSearch", "onResourceReady: " + e.getLocalizedMessage());
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onItemLongClick(View view, int position) {
+
+            }
+        }));
+
         return vx;
+    }
+
+    private void realTimeSearch(String query) {
+        if (!Objects.equals(query, "")) {
+            rvRealTimeSearch.setVisibility(View.GONE);
+            tvRealTimeSearchLoading.setVisibility(View.VISIBLE);
+            tvRealTimeSearchLoading.setText("Searching Gif...");
+            realTimeSearchList = new ArrayList<>();
+            String baseUrl ="https://expressjs-api-chat-keyboard.onrender.com/api/v1/items?searchtext="+query+"&a=b";
+            RequestQueue queue = Volley.newRequestQueue(this);
+
+            JsonObjectRequest subcatjsonObjectRequest = new JsonObjectRequest(baseUrl, response -> {
+                try{
+                    JSONArray jsonArray = response.getJSONArray("items");
+                    if (jsonArray.length() != 0) {
+                        for (int i = 0; i<jsonArray.length(); i++) {
+                            JSONObject object = jsonArray.getJSONObject(i);
+                            realTimeSearchList.add(new Gifdata(object.getString("multiline_text"), object.getString("gif"),
+                                    object.getString("thumbnail_gif"), object.getString("youtube_url") , false));
+                        }
+                        tvRealTimeSearchLoading.setVisibility(View.GONE);
+                        rvRealTimeSearch.setVisibility(View.VISIBLE);
+                        Gifgridviewadapter adapter = new Gifgridviewadapter(realTimeSearchList, this);
+                        rvRealTimeSearch.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+                        rvRealTimeSearch.setAdapter(adapter);
+                    } else {
+                        rvRealTimeSearch.setVisibility(View.GONE);
+                        tvRealTimeSearchLoading.setText("Not found");
+                    }
+                }catch (Exception e) {
+                    Log.d("RealTimeSearch", "realTimeSearch: " + e.getLocalizedMessage());
+                }
+            }, error -> {
+                Log.d("RealTimeSearch", "realTimeSearch: " + error.getMessage());
+                rvRealTimeSearch.setVisibility(View.GONE);
+                tvRealTimeSearchLoading.setVisibility(View.VISIBLE);
+                tvRealTimeSearchLoading.setText("Something went wrong...");
+            });
+            queue.add(subcatjsonObjectRequest);
+        } else {
+            tvRealTimeSearchLoading.setVisibility(View.GONE);
+            rvRealTimeSearch.setVisibility(View.GONE);
+        }
     }
 
     private void fetchSuggestion(String query, SuggestionListener listener) {
