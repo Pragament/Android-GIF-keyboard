@@ -47,7 +47,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import androidx.core.content.FileProvider;
 import androidx.core.view.inputmethod.EditorInfoCompat;
 import androidx.core.view.inputmethod.InputConnectionCompat;
@@ -84,7 +83,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -100,7 +98,7 @@ import okhttp3.Response;
 //import timber.log.Timber;
 
 public class SoftKeyboard extends InputMethodService
-        implements KeyboardView.OnKeyboardActionListener ,  InputConnectionCompat.OnCommitContentListener , HistoryClicked {
+        implements KeyboardView.OnKeyboardActionListener, InputConnectionCompat.OnCommitContentListener, HistoryClicked {
 
     /**
      * This boolean indicates the optional example code for performing
@@ -152,7 +150,7 @@ public class SoftKeyboard extends InputMethodService
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++gifpopupWindow+++++++++++++++++++++++++++++++++
     private Gifgridviewpopup gifpopupWindow = null;
 
-    HistoryClicked  historyClicked;
+    HistoryClicked historyClicked;
     private Dao userDao;
     private File imagesDir;
     //    private FrameLayout vx;
@@ -207,15 +205,15 @@ public class SoftKeyboard extends InputMethodService
         // Set custom theme to input view.
         LinearLayout vx = (LinearLayout) getLayoutInflater().inflate(R.layout.input_1, null);
 
-        searched =  vx.findViewById(R.id.searched);
+        searched = vx.findViewById(R.id.searched);
         LinearLayout settingsimg = vx.findViewById(R.id.settingsimg);
-        historyrecs =  vx.findViewById(R.id.historyrecs);
-        historyrecs.setLayoutManager(new LinearLayoutManager(vx.getContext() ,LinearLayoutManager.HORIZONTAL, false));
-        searchimg =  vx.findViewById(R.id.searchimg);
-        cancelimg =  vx.findViewById(R.id.cancelimg);
-        searchimgdone =  vx.findViewById(R.id.searchimgdone);
+        historyrecs = vx.findViewById(R.id.historyrecs);
+        historyrecs.setLayoutManager(new LinearLayoutManager(vx.getContext(), LinearLayoutManager.HORIZONTAL, false));
+        searchimg = vx.findViewById(R.id.searchimg);
+        cancelimg = vx.findViewById(R.id.cancelimg);
+        searchimgdone = vx.findViewById(R.id.searchimgdone);
 //        mInputView = (LatinKeyboardView) vx.findViewById(R.id.keyboardxx);
-        mInputView =  vx.findViewById(R.id.keyboardxx);
+        mInputView = vx.findViewById(R.id.keyboardxx);
         keyboardxxview = vx.findViewById(R.id.keyboard);
         tvSuggestion1 = vx.findViewById(R.id.tvSuggestion1);
         tvSuggestion2 = vx.findViewById(R.id.tvSuggestion2);
@@ -225,7 +223,7 @@ public class SoftKeyboard extends InputMethodService
 //        settingSesson = new SettingSesson(vx.getContext());
         settingsimg.setOnClickListener(view -> {
 //                getCurrentInputConnection().commitText("",1);
-            Intent intent = new Intent(view.getContext() ,DictionaryActivity.class);
+            Intent intent = new Intent(view.getContext(), DictionaryActivity.class);
             intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
             view.getContext().startActivity(intent);
         });
@@ -237,8 +235,7 @@ public class SoftKeyboard extends InputMethodService
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s ==null)
-                {
+                if (s == null) {
                     cancelimg.setVisibility(View.VISIBLE);
                     searchimgdone.setVisibility(View.GONE);
                 }else {
@@ -296,19 +293,17 @@ public class SoftKeyboard extends InputMethodService
             int settingsize = Integer.parseInt(settingSesson.getMinimumcharacters());
             int edtxtsize = searched.getText().toString().length();
 //                Log.e("search" , "txt sizes settingsize"+settingsize+" edtxtsize" +edtxtsize);
-            if( settingsize  >  edtxtsize )
-            {
+            if (settingsize > edtxtsize) {
                 Toast.makeText(SoftKeyboard.this, "Search word is smaller than from settings", Toast.LENGTH_SHORT).show();
                 return;
-            }else {
+            } else {
                 showGifGridview(searched.getText().toString(), historyviewmodel);
             }
 
             addUpdateWord();
         });
         searchimg.setOnTouchListener((v, event) -> {
-            if(cancelimg.getVisibility() == View.GONE && searched.getVisibility() == View.INVISIBLE)
-            {
+            if (cancelimg.getVisibility() == View.GONE && searched.getVisibility() == View.INVISIBLE) {
                 searched.setVisibility(View.VISIBLE);
                 cancelimg.setVisibility(View.VISIBLE);
                 searchimg.setVisibility(View.GONE);
@@ -317,8 +312,7 @@ public class SoftKeyboard extends InputMethodService
             return true;
         });
         cancelimg.setOnTouchListener((v, event) -> {
-            if(cancelimg.getVisibility() == View.VISIBLE && searched.getVisibility() == View.VISIBLE)
-            {
+            if (cancelimg.getVisibility() == View.VISIBLE && searched.getVisibility() == View.VISIBLE) {
                 searched.setVisibility(View.INVISIBLE);
                 cancelimg.setVisibility(View.GONE);
                 searchimg.setVisibility(View.VISIBLE);
@@ -339,6 +333,14 @@ public class SoftKeyboard extends InputMethodService
         String oldWord = searched.getText().toString();
 
         setLatinKeyboard(getSelectedSubtype());
+
+        searched.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                searched.post(() -> searched.requestFocus());
+            }
+            searched.setSelection(searched.getText().length());
+        });
+
         tvSuggestion1.setOnClickListener(view -> {
             searched.setText(oldWord.replace(oldWord, tvSuggestion1.getText()));
             searched.setSelection(tvSuggestion1.getText().length());
@@ -550,7 +552,7 @@ public class SoftKeyboard extends InputMethodService
                 // TODO: Use revokeUriPermission to revoke as needed.
                 grantUriPermission(
                         editorInfo.packageName, contentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            } catch (Exception e){
+            } catch (Exception e) {
                 Log.e("SoftKeyboard", "grantUriPermission failed packageName=" + editorInfo.packageName
                         + " contentUri=" + contentUri, e);
             }
@@ -568,8 +570,7 @@ public class SoftKeyboard extends InputMethodService
         // Switch back to the default keyboard
 
         boolean isDefaultKeyboard = settingSesson.switchKeyboardToDefault();
-        if(isDefaultKeyboard)
-        {
+        if (isDefaultKeyboard) {
             switchToDefaultKeyboard();
         }
 
@@ -806,21 +807,18 @@ public class SoftKeyboard extends InputMethodService
         mPredictionOn = true;
         //            db = new DatabaseManager(this);
         historyviewmodel = new Historyviewmodel(getApplication());
-        historyviewmodel.getAllWords().observeForever( words ->{
-            if(words.isEmpty())
+        historyviewmodel.getAllWords().observeForever(words -> {
+            if (words.isEmpty())
                 return;
             usershisatories.clear();
             Historymodal firstword = null;
 //            Log.e("Got" , "words :"+words.get(0).getTitle());
-            for(int i =0;i<words.size() ;i++)
-            {
-                if( i==0)
-                {
+            for (int i = 0; i < words.size(); i++) {
+                if (i == 0) {
                     firstword = words.get(i);
                     usershisatories.add(words.get(i));
-                }else {
-                    if(! (words.get(i).getTitle().equals(firstword.getTitle())) )
-                    {
+                } else {
+                    if (!(words.get(i).getTitle().equals(firstword.getTitle()))) {
                         usershisatories.add(words.get(i));
                         firstword = words.get(i);
                     }
@@ -830,7 +828,7 @@ public class SoftKeyboard extends InputMethodService
             }
 //            usershisatories.addAll(words);
 
-            historyadapter = new Historyadapter(usershisatories ,getApplication() ,userDao ,historyClicked);
+            historyadapter = new Historyadapter(usershisatories, getApplication(), userDao, historyClicked);
             historyrecs.setAdapter(historyadapter);
             historyadapter.notifyDataSetChanged();
         });
@@ -914,15 +912,13 @@ public class SoftKeyboard extends InputMethodService
         String[] mimeTypes = EditorInfoCompat.getContentMimeTypes(attribute);
 
 
-
         for (String mimeType : mimeTypes) {
             if (ClipDescription.compareMimeTypes(mimeType, "image/gif")) {
                 gifSupported = true;
             }
         }
         handleScreenUi();
-        if(cancelimg.getVisibility() == View.GONE && searched.getVisibility() == View.INVISIBLE)
-        {
+        if (cancelimg.getVisibility() == View.GONE && searched.getVisibility() == View.INVISIBLE) {
             searched.setVisibility(View.VISIBLE);
             cancelimg.setVisibility(View.VISIBLE);
             searchimg.setVisibility(View.GONE);
@@ -1181,8 +1177,8 @@ public class SoftKeyboard extends InputMethodService
      * Helper to send a key down / key up pair to the current editor.
      */
     private void keyDownUp() {
-        Log.e("Here " , "key event");
-        onKey(-111334 , null);
+        Log.e("Here ", "key event");
+        onKey(-111334, null);
 
     }
 
@@ -1204,77 +1200,36 @@ public class SoftKeyboard extends InputMethodService
     /**
      * Implementation of KeyboardViewListener
      */
+    @Override
     public void onKey(int primaryCode, int[] keyCodes) {
-        Log.e("ON" , "key working"+primaryCode);
-
-        Log.e("List" , "is empty");
-
-
-        if (isWordSeparator(primaryCode)) {
-
-            if (primaryCode == 32) {
-
-                Log.e("List" , "is empty");
-
-            }
-            sendKey(primaryCode);
-            updateShiftKeyState(getCurrentInputEditorInfo());
-        }  else if (primaryCode == Keyboard.KEYCODE_SHIFT) {
+        if (primaryCode == Keyboard.KEYCODE_DELETE) {
+            handleBackspace();
+        } else if (primaryCode == Keyboard.KEYCODE_SHIFT) {
             handleShift();
         } else if (primaryCode == Keyboard.KEYCODE_CANCEL) {
             handleClose();
-            return;
         } else if (primaryCode == LatinKeyboardView.KEYCODE_LANGUAGE_SWITCH) {
             handleLanguageSwitch();
-            return;
+        } else if (primaryCode == -10) {  // This is the code for ?123 / ABC switch
+            // Switch keyboard
+            if (mInputView.getKeyboard() == mQwertyKeyboard) {
+                mCurKeyboard = mSymbolsKeyboard;
+            } else {
+                mCurKeyboard = mQwertyKeyboard;
+            }
+            setLatinKeyboard(mCurKeyboard);
         } else if (primaryCode == -111334) {
-            // Show Emoticons
-            Log.e("Working" , "On this");
-//            showEmoticons();
-            if(searched.getText().toString().equals(""))
-            {
+            // Show Emoticons/GIF handling
+            if (searched.getText().toString().equals("")) {
                 showGifGridview("", historyviewmodel);
-            }else {
+            } else {
                 showGifGridview(searched.getText().toString(), historyviewmodel);
             }
-
-        } else if (primaryCode == -10001) {
-            // Zero Space
-            mComposing.append("\u200C");
-            getCurrentInputConnection().setComposingText(mComposing, 1);
-        } else if (primaryCode == -10002) {
-            // ẋ
-            mComposing.append("ẋ");
-            getCurrentInputConnection().setComposingText(mComposing, 1);
-        } else if (primaryCode == -10003) {
-            // Ẋ
-            mComposing.append("\u1E8A");
-            getCurrentInputConnection().setComposingText(mComposing, 1);
-        } else if (primaryCode == 1567) {
-            // Question mark.
-            mComposing.append("\u061F");
-            getCurrentInputConnection().setComposingText(mComposing, 1);
-        } else if (primaryCode == -10) {
-            //  keyboard layout switch
-            if (mCurKeyboard == mSymbolsKeyboard) {
-                // Switch to QWERTY
-                mCurKeyboard = mQwertyKeyboard;
-            } else {
-                // Switch to Symbols
-                mCurKeyboard = mSymbolsKeyboard;
-            }
-            // Apply the keyboard change
-            if (mInputView != null) {
-                mInputView.setKeyboard(mCurKeyboard);
-                keyboardxxview.setKeyboard(mCurKeyboard);
-            }
         } else {
-            ///++++++++++++++++++++++++++++++++++++++++After key presse and it's character+++
-
             handleCharacter(primaryCode);
         }
 
-        if (mSound) playClick(primaryCode); // Play sound with button click.
+        if (mSound) playClick(primaryCode);
     }
 
 
@@ -1302,7 +1257,7 @@ public class SoftKeyboard extends InputMethodService
     }
 
     public void onText(CharSequence text) {
-        Log.e("got" , "text"+text);
+        Log.e("got", "text" + text);
         InputConnection ic = getCurrentInputConnection();
         if (ic == null) return;
         ic.beginBatchEdit();
@@ -1334,19 +1289,24 @@ public class SoftKeyboard extends InputMethodService
     }
 
     private void handleBackspace() {
-        final int length = mComposing.length();
-        if (length > 1) {
-            mComposing.delete(length - 1, length);
-            getCurrentInputConnection().setComposingText(mComposing, 1);
+        try {
+            String currentText = searched.getText().toString();
+            int cursorPosition = searched.getSelectionStart();
 
-        } else if (length > 0) {
-            mComposing.setLength(0);
-            getCurrentInputConnection().commitText("", 0);
+            if (currentText.length() > 0 && cursorPosition > 0) {
+                // Remove character before cursor
+                StringBuilder newText = new StringBuilder(currentText);
+                newText.deleteCharAt(cursorPosition - 1);
 
-        } else {
-            keyDownUp();
+                mComposing.setLength(0);
+                mComposing.append(newText);
+
+                searched.setText(newText);
+                searched.setSelection(cursorPosition - 1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        updateShiftKeyState(getCurrentInputEditorInfo());
     }
 
     private void handleShift() {
@@ -1387,31 +1347,75 @@ public class SoftKeyboard extends InputMethodService
     }
 
     private void handleCharacter(int primaryCode) {
-        if(cancelimg.getVisibility() == View.GONE && !(searchimgdone.getVisibility() ==View.VISIBLE ))
-        {
-            Toast.makeText(this, "Tap on search icon first", Toast.LENGTH_SHORT).show();
+        if (searched.getVisibility() != View.VISIBLE) {
+            if (searchimg.getVisibility() == View.VISIBLE) {
+                Toast.makeText(this, "Tap on search icon first", Toast.LENGTH_SHORT).show();
+            }
             return;
         }
-        if (isInputViewShown()) {
-            if (mInputView.isShifted()) {
-                primaryCode = Character.toUpperCase(primaryCode);
+
+        searched.requestFocus();
+
+        // Handle backspace
+        if (primaryCode == -5) {
+            try {
+                String currentText = searched.getText().toString();
+                int cursorPosition = searched.getSelectionStart();
+
+                if (currentText.length() > 0 && cursorPosition > 0) {
+                    StringBuilder newText = new StringBuilder(currentText);
+                    newText.deleteCharAt(cursorPosition - 1);
+
+                    mComposing.setLength(0);
+                    mComposing.append(newText);
+
+                    searched.setText(newText);
+                    searched.setSelection(cursorPosition - 1);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
+        // Check if it's a special character that needs custom handling
+        boolean isSpecialChar = false;
+        switch (primaryCode) {
+            case 46: // dot (.)
+            case 64: // at (@)
+            case 35: // hash (#)
+            case 36: // dollar ($)
+            case 95: // underscore (_)
+            case 38: // ampersand (&)
+            case 45: // minus (-)
+            case 43: // plus (+)
+            case 40: // left parenthesis (
+            case 41: // right parenthesis )
+            case 47: // forward slash (/)
+            case 32: // space
+            case -14111123: // alternative space code
+                isSpecialChar = true;
+                break;
+        }
+
+        // Handle all characters including special ones
+        if (primaryCode > 0) {
+            char character = (char) primaryCode;
+
+            // shift only for letters
+            if (isInputViewShown() && mInputView.isShifted() && Character.isLetter(character)) {
+                character = Character.toUpperCase(character);
+            }
+
+            mComposing.append(character);
+            String newText = mComposing.toString();
+            searched.setText(newText);
+            searched.setSelection(newText.length());
+
+            if (isSpecialChar) {
+                getCurrentInputConnection().finishComposingText();
             }
         }
-        if (isAlphabet(primaryCode) && mPredictionOn) {
-            //+++++++The code which commit text to the selected input with prediction++++++++
-            mComposing.append((char) primaryCode);
-
-        } else if(primaryCode == -14111123){
-            //+++++++The code which commit text to the selected input++++++++
-            mComposing.append(" ");
-
-        }else if(primaryCode != -5) {
-            mComposing.append((char) primaryCode);
-        }
-        //++++++++++++++++++++++++++++++++++++++++++++++++searched edit text+++++++++++++++++++++++++++++++++
-        searched.setText(mComposing.toString());
-        Log.e("Handling" ,"Charqacters "+ mComposing);
-        //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     }
 
     private void handleClose() {
@@ -1451,7 +1455,7 @@ public class SoftKeyboard extends InputMethodService
         return mWordSeparators;
     }
 
-    public boolean isWordSeparator(int code) {
+    private boolean isWordSeparator(int code) {
         String separators = getWordSeparators();
         return separators.contains(String.valueOf((char) code));
     }
@@ -1497,58 +1501,35 @@ public class SoftKeyboard extends InputMethodService
     }
 
     public void onPress(int primaryCode) {
-        Log.e("Primary" , "code"+primaryCode);
         mInputView.setPreviewEnabled(true);
 
         // Disable preview key on Shift, Delete, Space, Language, Symbol and Emoticon.
         if (primaryCode == -1 || primaryCode == -2 || primaryCode == -10000
                 || primaryCode == -101 || primaryCode == 32) {
-
             mInputView.setPreviewEnabled(false);
-        }else  if( primaryCode == -5 )
-        {
-            Log.e("previe" , "primaryCode");
-            try{
-                final int length = searched.getText().toString().length();
-                if (length > 1) {
-                    mComposing.delete(length - 1, length);
-                    searched.setText(mComposing);
-                    searched.setSelection(mComposing.length());
-                } else if (length > 0) {
-                    mComposing.setLength(0);
-//                getCurrentInputConnection().commitText("", 0);
-                    searched.setText("");
-                    searched.setSelection(mComposing.length());
-//                updateCandidates();
-                }
-            }catch (Exception E )
-            {
-                getCurrentInputConnection().setComposingText("" ,0);
-                E.printStackTrace();
-
-            }
-
-        }else if(primaryCode == -14111123)
-        {
+        } else if (primaryCode == -5) {
+            // Remove backspace handling from onPress completely
+            mInputView.setPreviewEnabled(false);
+        } else if (primaryCode == -14111123) {
             searched.setText(searched.getText().toString());
         }
     }
 
     public void onRelease(int primaryCode) {
     }
+
     /**
      * This method displays Gifs when called.
-
      */
     private void showGifGridview(String searchtext, Historyviewmodel historyviewmodel) {
-        try{
+        try {
 //            LayoutInflater layoutInflater = (LayoutInflater) getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
             LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
 //        View view = dialog.getView();
             if (layoutInflater != null) {
 
-                @SuppressLint("InflateParams") View popupView = layoutInflater.inflate(R.layout.gifgridviewlayout, null );
-                gifpopupWindow = new Gifgridviewpopup(popupView, this ,searchtext ,historyviewmodel);
+                @SuppressLint("InflateParams") View popupView = layoutInflater.inflate(R.layout.gifgridviewlayout, null);
+                gifpopupWindow = new Gifgridviewpopup(popupView, this, searchtext, historyviewmodel);
                 gifpopupWindow.setSizeForSoftKeyboard();
                 gifpopupWindow.setSize(gifpopupWindow.getWidth(), (gifpopupWindow.getHeight()));
 //                gifpopupWindow.setSize(mQwertyKeyboard.getMinWidth() +20, (mQwertyKeyboard.getHeight() +120));
@@ -1558,12 +1539,11 @@ public class SoftKeyboard extends InputMethodService
 
                     boolean sessionsx = settingSesson.getAppendlink();
                     Boolean sessionsxgiflink = settingSesson.getgiflink();
-                    if(pos1 ==1)
-                    {
+                    if (pos1 == 1) {
                         SoftKeyboard.this.historyviewmodel.insertgif(new RecentGifEntity(new Gson().toJson(gifitem, Gifdata.class)));
                     }
 
-                    Log.e("settingSesson Gifdata" ,"Gif getAppendlink "+sessionsx);
+                    Log.e("settingSesson Gifdata", "Gif getAppendlink " + sessionsx);
                     Glide.with(popupView.getContext()).asGif()
                             .load(gifitem.getGif())
                             .into(new SimpleTarget<GifDrawable>() {
@@ -1580,7 +1560,7 @@ public class SoftKeyboard extends InputMethodService
                                             inputConnection.finishComposingText();
                                         }
                                     } else {
-                                        inputConnection.commitText(gifitem.getYoutubeUrl() + "\n" + gifitem.getMultilineText() ,15);
+                                        inputConnection.commitText(gifitem.getYoutubeUrl() + "\n" + gifitem.getMultilineText(), 15);
                                         inputConnection.finishComposingText();
                                     }
                                 }
@@ -1589,21 +1569,19 @@ public class SoftKeyboard extends InputMethodService
                                 public void onResourceReady(@NonNull GifDrawable gifDrawable, @Nullable Transition<? super GifDrawable> transition) {
                                     InputConnection ic = getCurrentInputConnection();
                                     if (isLocalGifSupported()) {
-                                        if(sessionsx)
-                                        {
+                                        if (sessionsx) {
 
-                                            ic.commitText(gifitem.getYoutubeUrl()  ,15);
+                                            ic.commitText(gifitem.getYoutubeUrl(), 15);
                                             ic.finishComposingText();
-                                        }else  if(sessionsxgiflink)
-                                        {
-                                            ic.commitText(gifitem.getMultilineText()  ,15);
+                                        } else if (sessionsxgiflink) {
+                                            ic.commitText(gifitem.getMultilineText(), 15);
                                             ic.finishComposingText();
                                         }
 
-                                        Log.e("It is " , "Gif supported");
+                                        Log.e("It is ", "Gif supported");
                                     } else {
-                                        Log.e("It is " , "Gif NOT supported");
-                                        ic.commitText(gifitem.getYoutubeUrl() +"\n"+gifitem.getMultilineText() ,15);
+                                        Log.e("It is ", "Gif NOT supported");
+                                        ic.commitText(gifitem.getYoutubeUrl() + "\n" + gifitem.getMultilineText(), 15);
                                         ic.finishComposingText();
                                     }
 
@@ -1611,8 +1589,7 @@ public class SoftKeyboard extends InputMethodService
                                     FileOutputStream output;
                                     try {
                                         imagesDir = new File(getFilesDir(), "sendgifs");
-                                        if(!(imagesDir.exists()) )
-                                        {
+                                        if (!(imagesDir.exists())) {
                                             imagesDir.mkdir();
                                         }
 //                                        imagesDir = new File(getFilesDir(), "sendgifs");
@@ -1625,7 +1602,7 @@ public class SoftKeyboard extends InputMethodService
                                         byteBuffer.get(bytes);
                                         output.write(bytes);
                                         output.close();
-                                        SoftKeyboard.this.doCommitContent(mGifFile );
+                                        SoftKeyboard.this.doCommitContent(mGifFile);
 
 
                                     } catch (Exception e) {
@@ -1638,9 +1615,8 @@ public class SoftKeyboard extends InputMethodService
                 });
 
             }
-        }catch (Exception e)
-        {
-            Log.e("softkeyboard" , "token not found");
+        } catch (Exception e) {
+            Log.e("softkeyboard", "token not found");
             e.printStackTrace();
 
         }
@@ -1666,12 +1642,8 @@ public class SoftKeyboard extends InputMethodService
     @Override
     public void OnHstoryclicked(Historymodal historymodal) {
         showGifGridview(historymodal.getTitle(), historyviewmodel);
-        Log.e("Got" , "some model");
+        Log.e("Got", "some model");
     }
-
-
-
-
 
 
     /**
@@ -1681,7 +1653,7 @@ public class SoftKeyboard extends InputMethodService
 
         Log.e("Historymodal", "getLastWord()" + getLastWord());
 
-        historyviewmodel.insert(new Historymodal( searched.getText().toString(), "S", "ww.gosdgf", 1));
+        historyviewmodel.insert(new Historymodal(searched.getText().toString(), "S", "ww.gosdgf", 1));
 
         AsyncTask.execute(() -> Log.e("Historymodal", "getLastWord()" + searched.getText().toString()));
 
@@ -1695,9 +1667,8 @@ public class SoftKeyboard extends InputMethodService
     }
 
     private void handleScreenUi() {
-        if (settingSesson.getShowSearchScreenByDefault()){
-            if(cancelimg.getVisibility() == View.GONE && searched.getVisibility() == View.INVISIBLE)
-            {
+        if (settingSesson.getShowSearchScreenByDefault()) {
+            if (cancelimg.getVisibility() == View.GONE && searched.getVisibility() == View.INVISIBLE) {
                 searched.setVisibility(View.VISIBLE);
                 cancelimg.setVisibility(View.VISIBLE);
                 searchimg.setVisibility(View.GONE);
