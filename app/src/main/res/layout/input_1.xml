@@ -2,6 +2,7 @@
 <LinearLayout
 
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/lineartopli"
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -131,6 +132,58 @@
         <!--        android:layout_width="match_parent"-->
         <!--        android:layout_height="50dp"-->
         <!--        ></EditText>-->
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:background="@android:color/darker_gray"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:textColor="@color/black"
+            android:id="@+id/tvSuggestion1"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:maxLines="1"
+            app:autoSizeTextType="uniform"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+        <View
+            android:background="@android:color/black"
+            android:layout_width="2dp"
+            android:layout_height="match_parent"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:textColor="@color/black"
+            android:id="@+id/tvSuggestion2"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:maxLines="1"
+            app:autoSizeTextType="uniform"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+        <View
+            android:background="@android:color/black"
+            android:layout_width="2dp"
+            android:layout_height="match_parent"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:textColor="@color/black"
+            android:id="@+id/tvSuggestion3"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:maxLines="1"
+            app:autoSizeTextType="uniform"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
         <com.optimum.coolkeybord.android.LatinKeyboardView
 
             android:id="@+id/keyboardxx"
@@ -143,6 +196,25 @@
             android:popupLayout="@layout/keyboard_popup_layout" />
         <!--        android:popupLayout="@layout/keyboard_popup_layout"-->
         <!--        xmlns:android="http://schemas.android.com/apk/res/android" />-->
+
+    <com.google.android.material.textview.MaterialTextView
+        android:background="@color/white"
+        android:textColor="@color/black"
+        android:id="@+id/tvRealTimeSearchLoading"
+        android:textSize="18sp"
+        android:visibility="gone"
+        android:gravity="center"
+        android:text="Searching Gif..."
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:visibility="gone"
+        android:background="@color/white"
+        android:id="@+id/rvRealTimeSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
         <com.optimum.coolkeybord.android.LatinKeyboardView
             android:visibility="gone"
             android:id="@+id/keyboard"
