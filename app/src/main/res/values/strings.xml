@@ -52,4 +52,5 @@
     <string name="show_hindi_text">Show hindi text</string>
     <string name="show_kannada_text">Show kannada text</string>
     <string name="show_malayalam_text">Show malayalam text</string>
+    <string name="not_found_text">Tap to send as %s</string>
 </resources>

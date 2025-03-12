@@ -40,6 +40,7 @@ import android.view.inputmethod.InputBinding;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -62,8 +63,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textview.MaterialTextView;
 import com.google.gson.Gson;
+import com.ibm.icu.text.Transliterator;
 import com.optimum.coolkeybord.DictionaryActivity;
 import com.optimum.coolkeybord.R;
 import com.optimum.coolkeybord.adapter.Gifgridviewadapter;
@@ -87,6 +90,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import okhttp3.Call;
@@ -158,7 +162,7 @@ public class SoftKeyboard extends InputMethodService
     // Add new keyboard field
     private LatinKeyboard mSymbolsKeyboard;
     private MaterialTextView tvSuggestion1, tvSuggestion2, tvSuggestion3;
-    private MaterialTextView tvRealTimeSearchLoading;
+    private Button btnRealTimeSearchStatus;
     private RecyclerView rvRealTimeSearch;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -219,7 +223,7 @@ public class SoftKeyboard extends InputMethodService
         tvSuggestion2 = vx.findViewById(R.id.tvSuggestion2);
         tvSuggestion3 = vx.findViewById(R.id.tvSuggestion3);
         rvRealTimeSearch = vx.findViewById(R.id.rvRealTimeSearch);
-        tvRealTimeSearchLoading = vx.findViewById(R.id.tvRealTimeSearchLoading);
+        btnRealTimeSearchStatus = vx.findViewById(R.id.btnRealTimeSearchStatus);
 //        settingSesson = new SettingSesson(vx.getContext());
         settingsimg.setOnClickListener(view -> {
 //                getCurrentInputConnection().commitText("",1);
@@ -424,15 +428,26 @@ public class SoftKeyboard extends InputMethodService
 
             }
         }));
+        
+        btnRealTimeSearchStatus.setOnClickListener(view -> {
+            InputConnection ic = getCurrentInputConnection();
+            ic.commitText(transliterateWord(searched.getText().toString()), 15);
+            ic.finishComposingText();
+        });
 
         return vx;
+    }
+
+    private String transliterateWord(String input) {
+        Transliterator transliterator = Transliterator.getInstance("Any-Latin");
+        return transliterator.transliterate(input);
     }
 
     private void realTimeSearch(String query) {
         if (!Objects.equals(query, "")) {
             rvRealTimeSearch.setVisibility(View.GONE);
-            tvRealTimeSearchLoading.setVisibility(View.VISIBLE);
-            tvRealTimeSearchLoading.setText("Searching Gif...");
+            btnRealTimeSearchStatus.setVisibility(View.VISIBLE);
+            btnRealTimeSearchStatus.setText("Searching Gif...");
             realTimeSearchList = new ArrayList<>();
             String baseUrl ="https://expressjs-api-chat-keyboard.onrender.com/api/v1/items?searchtext="+query+"&a=b";
             RequestQueue queue = Volley.newRequestQueue(this);
@@ -446,14 +461,15 @@ public class SoftKeyboard extends InputMethodService
                             realTimeSearchList.add(new Gifdata(object.getString("multiline_text"), object.getString("gif"),
                                     object.getString("thumbnail_gif"), object.getString("youtube_url") , false));
                         }
-                        tvRealTimeSearchLoading.setVisibility(View.GONE);
+                        btnRealTimeSearchStatus.setVisibility(View.GONE);
                         rvRealTimeSearch.setVisibility(View.VISIBLE);
                         Gifgridviewadapter adapter = new Gifgridviewadapter(realTimeSearchList, this);
                         rvRealTimeSearch.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
                         rvRealTimeSearch.setAdapter(adapter);
                     } else {
                         rvRealTimeSearch.setVisibility(View.GONE);
-                        tvRealTimeSearchLoading.setText("Not found");
+                        btnRealTimeSearchStatus.setText(getResources().getString(R.string.not_found_text,
+                                transliterateWord(searched.getText().toString())));
                     }
                 }catch (Exception e) {
                     Log.d("RealTimeSearch", "realTimeSearch: " + e.getLocalizedMessage());
@@ -461,12 +477,12 @@ public class SoftKeyboard extends InputMethodService
             }, error -> {
                 Log.d("RealTimeSearch", "realTimeSearch: " + error.getMessage());
                 rvRealTimeSearch.setVisibility(View.GONE);
-                tvRealTimeSearchLoading.setVisibility(View.VISIBLE);
-                tvRealTimeSearchLoading.setText("Something went wrong...");
+                btnRealTimeSearchStatus.setVisibility(View.VISIBLE);
+                btnRealTimeSearchStatus.setText("Something went wrong...");
             });
             queue.add(subcatjsonObjectRequest);
         } else {
-            tvRealTimeSearchLoading.setVisibility(View.GONE);
+            btnRealTimeSearchStatus.setVisibility(View.GONE);
             rvRealTimeSearch.setVisibility(View.GONE);
         }
     }
