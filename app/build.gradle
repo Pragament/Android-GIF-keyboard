@@ -89,6 +89,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
 
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.ibm.icu:icu4j:74.2'
 // add below dependancy for using lifecycle extensions for room.
 }
 apply plugin: 'com.google.gms.google-services'

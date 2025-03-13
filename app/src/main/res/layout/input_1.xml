@@ -197,10 +197,11 @@
         <!--        android:popupLayout="@layout/keyboard_popup_layout"-->
         <!--        xmlns:android="http://schemas.android.com/apk/res/android" />-->
 
-    <com.google.android.material.textview.MaterialTextView
+    <Button
+        style="@style/Widget.Material3.Button.TextButton"
         android:background="@color/white"
         android:textColor="@color/black"
-        android:id="@+id/tvRealTimeSearchLoading"
+        android:id="@+id/btnRealTimeSearchStatus"
         android:textSize="18sp"
         android:visibility="gone"
         android:gravity="center"
