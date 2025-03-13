@@ -52,7 +52,6 @@ import androidx.core.content.FileProvider;
 import androidx.core.view.inputmethod.EditorInfoCompat;
 import androidx.core.view.inputmethod.InputConnectionCompat;
 import androidx.core.view.inputmethod.InputContentInfoCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -63,10 +62,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textview.MaterialTextView;
 import com.google.gson.Gson;
-import com.ibm.icu.text.Transliterator;
 import com.optimum.coolkeybord.DictionaryActivity;
 import com.optimum.coolkeybord.R;
 import com.optimum.coolkeybord.adapter.Gifgridviewadapter;
@@ -87,10 +84,10 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 import okhttp3.Call;
@@ -168,6 +165,11 @@ public class SoftKeyboard extends InputMethodService
     private final Handler handler = new Handler(Looper.getMainLooper());
     private Runnable workRunnable;
     private ArrayList<Gifdata> realTimeSearchList;
+
+    private final ArrayList<String> translatedWords = new ArrayList<>();
+    private final ArrayList<String> transliteratedWords = new ArrayList<>();
+    private int currentTranslationIndex = 0;
+    private int currentTransliterationIndex = 0;
 
     @Override
     public void onCreate() {
@@ -428,19 +430,127 @@ public class SoftKeyboard extends InputMethodService
 
             }
         }));
-        
+
         btnRealTimeSearchStatus.setOnClickListener(view -> {
-            InputConnection ic = getCurrentInputConnection();
-            ic.commitText(transliterateWord(searched.getText().toString()), 15);
-            ic.finishComposingText();
+            handleGifNotFound(searched.getText().toString());
         });
 
         return vx;
     }
 
-    private String transliterateWord(String input) {
-        Transliterator transliterator = Transliterator.getInstance("Any-Latin");
-        return transliterator.transliterate(input);
+    private void handleGifNotFound(String word) {
+        String[] languages = settingSesson.getSlelectedlang().split(",");
+        translatedWords.clear();
+        transliteratedWords.clear();
+        currentTranslationIndex = 0;
+        currentTransliterationIndex = 0;
+
+        translateWord(word, languages, () -> {
+            transliterateWord(languages, translatedWords, () -> {
+                StringBuilder output = new StringBuilder();
+
+                for (String str : transliteratedWords) {
+                    output.append(str).append("\n");
+                }
+                InputConnection ic = getCurrentInputConnection();
+                ic.commitText(output.toString().trim(), 1);
+                ic.finishComposingText();
+            });
+        });
+    }
+
+    private void translateWord(final String text, final String[] languages, Listener listener) {
+        if (currentTranslationIndex >= languages.length) {
+            listener.onComplete();
+            return;
+        }
+
+        String targetLang = languages[currentTranslationIndex];
+        String url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=" + targetLang + "&dt=t&q=" + text;
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder().url(url).get().build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.e("Translation", "Translation failed: " + e.getLocalizedMessage());
+                currentTranslationIndex++;
+                translateWord(text, languages, listener);
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful() && response.body() != null) {
+                    String responseBody = response.body().string();
+                    try {
+                        JSONArray jsonArray = new JSONArray(responseBody);
+                        String translatedText = jsonArray.getJSONArray(0).getJSONArray(0).getString(0);
+                        translatedWords.add(translatedText);
+                    } catch (JSONException e) {
+                        Log.e("Translation", "JSON Parsing Error: " + e.getMessage());
+                    }
+                }
+                currentTranslationIndex++;
+                translateWord(text, languages, listener);
+            }
+        });
+    }
+
+    private void transliterateWord(String[] languages, ArrayList<String> translatedTexts, Listener listener) {
+        if (currentTransliterationIndex >= translatedTexts.size()) {
+            listener.onComplete();
+            return;
+        }
+
+        String sourceLang = languages[currentTransliterationIndex];
+        String textToTransliterate = translatedTexts.get(currentTransliterationIndex);
+
+        if (!Objects.equals(sourceLang, "en")){
+            try {
+                String encodedText = URLEncoder.encode(textToTransliterate, "UTF-8");
+                String url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=" + sourceLang + "&tl=" + sourceLang + "-Latn&dt=rm&q=" + encodedText;
+
+                OkHttpClient client = new OkHttpClient();
+                Request request = new Request.Builder().url(url).get().build();
+
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        Log.e("Transliteration", "Failed: " + e.getLocalizedMessage());
+                        currentTransliterationIndex++;
+                        transliterateWord(languages, translatedTexts, listener);
+                    }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        if (response.isSuccessful() && response.body() != null) {
+                            String responseBody = response.body().string();
+                            try {
+                                JSONArray jsonArray = new JSONArray(responseBody);
+                                String transliteratedText = jsonArray.getJSONArray(0).getJSONArray(0).getString(3);
+                                transliteratedWords.add(transliteratedText);
+                            } catch (JSONException e) {
+                                Log.e("Transliteration", "JSON Error: " + e.getMessage());
+                            }
+                        }
+                        currentTransliterationIndex++;
+                        transliterateWord(languages, translatedTexts, listener);
+                    }
+                });
+            } catch (Exception e) {
+                Log.e("Transliteration", "Encoding Error: " + e.getMessage());
+                listener.onComplete();
+            }
+        } else {
+            currentTransliterationIndex++;
+            transliteratedWords.add(textToTransliterate);
+            transliterateWord(languages, translatedTexts, listener);
+        }
+    }
+
+    public interface Listener {
+        void onComplete();
     }
 
     private void realTimeSearch(String query) {
@@ -469,7 +579,7 @@ public class SoftKeyboard extends InputMethodService
                     } else {
                         rvRealTimeSearch.setVisibility(View.GONE);
                         btnRealTimeSearchStatus.setText(getResources().getString(R.string.not_found_text,
-                                transliterateWord(searched.getText().toString())));
+                                searched.getText().toString()));
                     }
                 }catch (Exception e) {
                     Log.d("RealTimeSearch", "realTimeSearch: " + e.getLocalizedMessage());
