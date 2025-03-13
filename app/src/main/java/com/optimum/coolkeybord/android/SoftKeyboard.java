@@ -347,18 +347,16 @@ public class SoftKeyboard extends InputMethodService
             searched.setSelection(searched.getText().length());
         });
 
-        tvSuggestion1.setOnClickListener(view -> {
-            searched.setText(oldWord.replace(oldWord, tvSuggestion1.getText()));
-            searched.setSelection(tvSuggestion1.getText().length());
-        });
-        tvSuggestion2.setOnClickListener(view -> {
-            searched.setText(oldWord.replace(oldWord, tvSuggestion2.getText()));
-            searched.setSelection(tvSuggestion2.getText().length());
-        });
-        tvSuggestion3.setOnClickListener(view -> {
-            searched.setText(oldWord.replace(oldWord, tvSuggestion3.getText()));
-            searched.setSelection(tvSuggestion3.getText().length());
-        });
+        tvSuggestion1.setOnClickListener(view ->
+                updateSearchText(tvSuggestion1.getText().toString())
+        );
+        tvSuggestion2.setOnClickListener(view ->
+                updateSearchText(tvSuggestion2.getText().toString())
+        );
+        tvSuggestion3.setOnClickListener(view ->
+                updateSearchText(tvSuggestion3.getText().toString())
+        );
+
 
         rvRealTimeSearch.addOnItemTouchListener(new RecyclerItemClickListener(this, rvRealTimeSearch, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
@@ -436,6 +434,13 @@ public class SoftKeyboard extends InputMethodService
         });
 
         return vx;
+    }
+
+    private void updateSearchText(String newText) {
+        searched.setText(newText);
+        searched.setSelection(newText.length());
+        mComposing.setLength(0);
+        mComposing.append(newText);
     }
 
     private void handleGifNotFound(String word) {
