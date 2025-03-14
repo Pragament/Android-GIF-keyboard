@@ -669,6 +669,9 @@ public class SoftKeyboard extends InputMethodService
                 }
             });
         } else {
+            tvSuggestion1.setText("");
+            tvSuggestion2.setText("");
+            tvSuggestion3.setText("");
             listener.onSuggestionReceived(new ArrayList<>());
         }
     }
