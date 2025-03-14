@@ -234,9 +234,12 @@ public class SoftKeyboard extends InputMethodService
             view.getContext().startActivity(intent);
         });
         searched.addTextChangedListener(new TextWatcher() {
+            private String previousText = "";
+            private String queryText = "";
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 searched.setSelection(searched.getText().length());
+                previousText = s.toString();
             }
 
             @Override
@@ -245,46 +248,64 @@ public class SoftKeyboard extends InputMethodService
                     cancelimg.setVisibility(View.VISIBLE);
                     searchimgdone.setVisibility(View.GONE);
                 }else {
-                    if (workRunnable != null) {
-                        handler.removeCallbacks(workRunnable);
-                    }
+                   if (!s.toString().isEmpty()) {
+                       String currentText = s.toString();
+                       String[] words = currentText.split("\\s+");
+                       if (words.length > 0) {
+                           String lastWord = words[words.length - 1];
+                           if (!lastWord.isEmpty() && !currentText.equals(previousText)) {
+                               queryText = lastWord;
+                           }
+                       }
 
-                    workRunnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            realTimeSearch(s.toString());
-                            fetchSuggestion(s.toString(), new SuggestionListener() {
-                                @Override
-                                public void onSuggestionReceived(ArrayList<String> suggestions) {
-                                    switch (suggestions.size()) {
-                                        case 1:
-                                            tvSuggestion1.setText("");
-                                            tvSuggestion2.setText(suggestions.get(0));
-                                            tvSuggestion3.setText("");
-                                            break;
-                                        case 2:
-                                            tvSuggestion1.setText(suggestions.get(1));
-                                            tvSuggestion2.setText(suggestions.get(0));
-                                            tvSuggestion3.setText("");
-                                            break;
-                                        case 3:
-                                            tvSuggestion1.setText(suggestions.get(1));
-                                            tvSuggestion2.setText(suggestions.get(0));
-                                            tvSuggestion3.setText(suggestions.get(2));
-                                            break;
-                                        default:
-                                            tvSuggestion1.setText("");
-                                            tvSuggestion2.setText("");
-                                            tvSuggestion3.setText("");
-                                            break;
-                                    }
-                                }
-                            });
-                        }
-                    };
-                    handler.postDelayed(workRunnable, 300);
-                    cancelimg.setVisibility(View.GONE);
-                    searchimgdone.setVisibility(View.VISIBLE);
+                       if (workRunnable != null) {
+                           handler.removeCallbacks(workRunnable);
+                       }
+
+                       workRunnable = new Runnable() {
+                           @Override
+                           public void run() {
+                               realTimeSearch(s.toString());
+                               fetchSuggestion(queryText, new SuggestionListener() {
+                                   @Override
+                                   public void onSuggestionReceived(ArrayList<String> suggestions) {
+                                       switch (suggestions.size()) {
+                                           case 1:
+                                               tvSuggestion1.setText("");
+                                               tvSuggestion2.setText(suggestions.get(0));
+                                               tvSuggestion3.setText("");
+                                               break;
+                                           case 2:
+                                               tvSuggestion1.setText(suggestions.get(1));
+                                               tvSuggestion2.setText(suggestions.get(0));
+                                               tvSuggestion3.setText("");
+                                               break;
+                                           case 3:
+                                               tvSuggestion1.setText(suggestions.get(1));
+                                               tvSuggestion2.setText(suggestions.get(0));
+                                               tvSuggestion3.setText(suggestions.get(2));
+                                               break;
+                                           default:
+                                               tvSuggestion1.setText("");
+                                               tvSuggestion2.setText("");
+                                               tvSuggestion3.setText("");
+                                               break;
+                                       }
+                                   }
+                               });
+                           }
+                       };
+                       handler.postDelayed(workRunnable, 500);
+                       cancelimg.setVisibility(View.GONE);
+                       searchimgdone.setVisibility(View.VISIBLE);
+                   } else {
+                       handler.removeCallbacks(workRunnable);
+                       btnRealTimeSearchStatus.setVisibility(View.GONE);
+                       rvRealTimeSearch.setVisibility(View.GONE);
+                       tvSuggestion1.setText("");
+                       tvSuggestion2.setText("");
+                       tvSuggestion3.setText("");
+                   }
                 }
 
             }
@@ -437,10 +458,16 @@ public class SoftKeyboard extends InputMethodService
     }
 
     private void updateSearchText(String newText) {
-        searched.setText(newText);
-        searched.setSelection(newText.length());
-        mComposing.setLength(0);
-        mComposing.append(newText);
+        String currentText = searched.getText().toString().trim();
+        String[] words = currentText.split("\\s+");
+        if (words.length > 0) {
+            words[words.length - 1] = newText;
+            String updatedText = String.join(" ", words);
+            searched.setText(updatedText);
+            searched.setSelection(updatedText.length());
+            mComposing.setLength(0);
+            mComposing.append(updatedText);
+        }
     }
 
     private void handleGifNotFound(String word) {
@@ -642,6 +669,9 @@ public class SoftKeyboard extends InputMethodService
                 }
             });
         } else {
+            tvSuggestion1.setText("");
+            tvSuggestion2.setText("");
+            tvSuggestion3.setText("");
             listener.onSuggestionReceived(new ArrayList<>());
         }
     }
