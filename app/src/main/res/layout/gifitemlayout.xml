@@ -7,12 +7,31 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
-    <ImageView
-        android:layout_margin="5dp"
-        android:id="@+id/gifitemgg"
-        android:layout_width="90dp"
-        android:layout_height="90dp">
-    </ImageView>
+
+    <!-- GIF with Favorite Star -->
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/gifitemgg"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="GIF" />
+
+        <ImageButton
+            android:id="@+id/btn_favorite"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="top|end"
+            android:layout_margin="8dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_star_border"
+            android:contentDescription="Favorite Button" />
+
+    </FrameLayout>
+
 
     <TextView
         android:id="@+id/multiline_text"
@@ -25,15 +44,5 @@
         android:visibility="gone"
         android:maxWidth="90dp"
         android:breakStrategy="simple" />
-
-
-
-    <!--    <pl.droidsonroids.gif.GifImageView-->
-<!--        android:layout_marginTop="10dp"-->
-<!--        android:layout_marginStart="10dp"-->
-<!--        android:layout_width="90dp"-->
-<!--        android:layout_height="90dp"-->
-<!--        android:id="@+id/gifitemgg"-->
-<!--       />-->
 
 </LinearLayout>

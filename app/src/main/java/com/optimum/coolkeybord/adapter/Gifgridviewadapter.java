@@ -22,6 +22,8 @@ import com.bumptech.glide.request.target.Target;
 import com.optimum.coolkeybord.R;
 import com.optimum.coolkeybord.models.Gifdata;
 import com.optimum.coolkeybord.settingssession.SettingSesson;
+import android.content.SharedPreferences;
+import android.widget.ImageButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,33 +35,61 @@ public class Gifgridviewadapter extends   RecyclerView.Adapter<Gifgridviewadapte
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView gifitemgg;
-        public Button button;
+        public ImageButton btnFavorite; // ⭐ Add favorite button
         public TextView gifText;
 
         public ViewHolder(View v) {
             super(v);
             gifitemgg = v.findViewById(R.id.gifitemgg);
             gifText = v.findViewById(R.id.multiline_text);
+            btnFavorite = v.findViewById(R.id.btn_favorite); // ⭐ Link button to XML
         }
     }
+
 
     public Gifgridviewadapter(ArrayList<Gifdata> myDataset, Context context) {
         mDataset = myDataset;
         this.context = context;
         this.session = new SettingSesson(context);
+
     }
 
     @NonNull
     @Override
     public Gifgridviewadapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
-        View v = (View) LayoutInflater.from(parent.getContext()).inflate(R.layout.gifitemlayout, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.gifitemlayout, parent, false);
         return new Gifgridviewadapter.ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(Gifgridviewadapter.ViewHolder holder, int position) {
         Gifdata gifData = mDataset.get(position);
+        String gifUrl = gifData.getThumbnailGif(); // or gifData.getGifUrl() if needed
+
+// Load favorite state from SharedPreferences
+        SharedPreferences prefs = context.getSharedPreferences("favorites", Context.MODE_PRIVATE);
+        prefs.edit().putString(gifUrl, "true").apply();
+        boolean isFavorite = prefs.contains(gifUrl);
+
+// Set initial icon
+        holder.btnFavorite.setImageResource(
+                isFavorite ? R.drawable.ic_star_filled : R.drawable.ic_star_border
+        );
+
+// Toggle onClick
+        holder.btnFavorite.setOnClickListener(v -> {
+            SharedPreferences.Editor editor = prefs.edit();
+            if (prefs.contains(gifUrl)) {
+                editor.remove(gifUrl);
+                holder.btnFavorite.setImageResource(R.drawable.ic_star_border);
+            } else {
+                editor.putString(gifUrl, "true");
+                holder.btnFavorite.setImageResource(R.drawable.ic_star_filled);
+            }
+            editor.apply();
+        });
+
 
         boolean showTextOnly = session.showTextInsteadOfThumbnail();
 

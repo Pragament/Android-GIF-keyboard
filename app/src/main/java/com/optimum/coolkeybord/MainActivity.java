@@ -11,9 +11,12 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
-
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import com.optimum.coolkeybord.FavoritesFragment;
+
+
 
 
 
@@ -25,13 +28,24 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        LinearLayout enableSetting = findViewById(R.id.layout_EnableSetting);
+        setContentView(R.layout.activity_main); // or keyboard_layout
+        LinearLayout layoutEnableSetting = findViewById(R.id.layout_EnableSetting);
+        LinearLayout layoutChooseInput = findViewById(R.id.layout_ChooseInput);
 
-        LinearLayout chooseInputMethod = findViewById(R.id.layout_ChooseInput);
-        enableSetting.setOnClickListener(this);
-        chooseInputMethod.setOnClickListener(this);
+        layoutEnableSetting.setOnClickListener(this);
+        layoutChooseInput.setOnClickListener(this);
+
+
+        Button btnFavorites = findViewById(R.id.btn_open_favorites);
+        btnFavorites.setOnClickListener(v -> {
+            Toast.makeText(MainActivity.this, "Button clicked!", Toast.LENGTH_SHORT).show();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.container, new FavoritesFragment())
+                    .commit();
+        });
     }
+
 
 
     @SuppressLint("NonConstantResourceId")
