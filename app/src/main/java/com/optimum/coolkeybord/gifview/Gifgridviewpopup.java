@@ -261,6 +261,9 @@ public class Gifgridviewpopup extends PopupWindow {
             recentgifrec.setVisibility(View.VISIBLE);
             gifgridlay.setVisibility(View.GONE);
             makeCategories(view);
+            subcatrec.setVisibility(View.VISIBLE);
+            subcategoriesmodelArrayList.clear();
+            makeDefaultSubcategories();
         }else {
             Log.d("Gifridviewpopup","Search text: " + searchtext);  // If input is present, load matched gifs from API
             recentgifrec.setVisibility(View.GONE);
@@ -490,10 +493,19 @@ public class Gifgridviewpopup extends PopupWindow {
             if(searchtext.isEmpty())
             {
                 categoriesmodelArrayList.get(0).setSelectedornot(true);
-                subcatadapter.notifyItemChanged(0);
+
+                if (subcatadapter != null) {
+                    subcatadapter.notifyItemChanged(0);
+                } else {
+                    Log.e("Gifgridviewpopup", "Subcatadapter is null at position" + 0);
+                }
 
                 // Load gifs for first subcategory
-                getSubcategories(subcategoriesmodelArrayList.get(0).getSubcategoryid(), mContext, 1);
+                if (!subcategoriesmodelArrayList.isEmpty()) {
+                    getSubcategories(subcategoriesmodelArrayList.get(0).getSubcategoryid(), mContext, 1);
+                }else{
+                    Log.e("Subcategory", "Empty subcategory list. Skipping default subcategory call.");
+                }
             }else {
                 context.findViewById(R.id.emojis_keyboard_image).setBackground(context.getContext().getDrawable(R.drawable.selectedgif));
             }
@@ -533,7 +545,10 @@ public class Gifgridviewpopup extends PopupWindow {
             if(!subcategoriesmodelArrayList.isEmpty())
             {
                 subcategoriesmodelArrayList.get(0).setSelectedornot(true);
-                subcatadapter.notifyItemChanged(0);
+                if (subcatadapter != null) {
+                    subcatadapter.notifyDataSetChanged();
+                }
+
                 try{
                     Log.e("subcategoriesmodel" ,""+ subcategoriesmodelArrayList.toString());
                     getSubcategories(subcategoriesmodelArrayList.get(0).getSubcategoryid() ,mContext, 1);
@@ -695,6 +710,30 @@ public class Gifgridviewpopup extends PopupWindow {
 
     public interface onGifclickedListner {
         void onGifclicked(Gifdata gifitem, SettingSesson settingSesson ,int place);
+    }
+
+    private void makeDefaultSubcategories() {
+        if (categoriesmodelArrayList.isEmpty()) return;
+
+        // Auto select the first category
+        categoriesmodelArrayList.get(0).setSelectedornot(true);
+        categoriesAdapter.notifyItemChanged(0);
+
+        // Get subcategories of first category
+        List<Sub_catitemModel> defaultSubs = categoriesmodelArrayList.get(0).getSub_catitemModels();
+        subcategoriesmodelArrayList.clear();
+        subcategoriesmodelArrayList.addAll(defaultSubs);
+
+        if (!subcategoriesmodelArrayList.isEmpty()) {
+            subcategoriesmodelArrayList.get(0).setSelectedornot(true);
+            subcatadapter = new Subcatadapter(subcategoriesmodelArrayList, mContext);
+            subcatrec.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
+            subcatrec.setAdapter(subcatadapter);
+            subcatadapter.notifyItemChanged(0);
+
+            // Load gifs for first subcategory
+            getSubcategories(subcategoriesmodelArrayList.get(0).getSubcategoryid(), mContext, 1);
+        }
     }
 
 }
