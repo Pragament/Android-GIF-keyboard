@@ -203,6 +203,13 @@
             android:layout_height="wrap_content"/>
 
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:orientation="horizontal"
+        android:id="@+id/searchRecentGif"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
         <com.optimum.coolkeybord.android.LatinKeyboardView
 
             android:id="@+id/keyboardxx"
