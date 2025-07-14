@@ -164,6 +164,7 @@ public class SoftKeyboard extends InputMethodService
     private MaterialTextView tvSuggestion1, tvSuggestion2, tvSuggestion3;
     private Button btnRealTimeSearchStatus;
     private RecyclerView rvRealTimeSearch, searchRecentGif;
+    private LinearLayout llMainRecentView, imgBtnGoExplore;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private Runnable workRunnable;
@@ -232,6 +233,8 @@ public class SoftKeyboard extends InputMethodService
         rvRealTimeSearch = vx.findViewById(R.id.rvRealTimeSearch);
         searchRecentGif = vx.findViewById(R.id.searchRecentGif);
         btnRealTimeSearchStatus = vx.findViewById(R.id.btnRealTimeSearchStatus);
+        llMainRecentView = vx.findViewById(R.id.llMainRecentView);
+        imgBtnGoExplore = vx.findViewById(R.id.imgBtnGoExplore);
         recentsubgifdataArrayList = new ArrayList<Gifdata>();
 //        settingSesson = new SettingSesson(vx.getContext());
         settingsimg.setOnClickListener(view -> {
@@ -252,7 +255,7 @@ public class SoftKeyboard extends InputMethodService
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s == null) {
-                    searchRecentGif.setVisibility(View.VISIBLE);
+                    llMainRecentView.setVisibility(View.VISIBLE);
                     cancelimg.setVisibility(View.VISIBLE);
                     searchimgdone.setVisibility(View.GONE);
                 }else {
@@ -274,7 +277,7 @@ public class SoftKeyboard extends InputMethodService
                            @Override
                            public void run() {
                                realTimeSearch(s.toString());
-                               searchRecentGif.setVisibility(View.GONE);
+                               llMainRecentView.setVisibility(View.GONE);
                                fetchSuggestion(queryText, new SuggestionListener() {
                                    @Override
                                    public void onSuggestionReceived(ArrayList<String> suggestions) {
@@ -308,7 +311,7 @@ public class SoftKeyboard extends InputMethodService
                        cancelimg.setVisibility(View.GONE);
                        searchimgdone.setVisibility(View.VISIBLE);
                    } else {
-                       searchRecentGif.setVisibility(View.VISIBLE);
+                       llMainRecentView.setVisibility(View.VISIBLE);
                        handler.removeCallbacks(workRunnable);
                        btnRealTimeSearchStatus.setVisibility(View.GONE);
                        rvRealTimeSearch.setVisibility(View.GONE);
@@ -465,7 +468,7 @@ public class SoftKeyboard extends InputMethodService
         });
 
         if (searched.getText().toString().equals("")) {
-            searchRecentGif.setVisibility(View.VISIBLE);
+            llMainRecentView.setVisibility(View.VISIBLE);
             historyviewmodel = new Historyviewmodel(getApplication());
 
             historyviewmodel.getmAllRecentGifs().observeForever( gifEntities ->{
@@ -515,7 +518,7 @@ public class SoftKeyboard extends InputMethodService
 
             });
         } else  {
-            searchRecentGif.setVisibility(View.GONE);
+            llMainRecentView.setVisibility(View.GONE);
         }
 
         searchRecentGif.addOnItemTouchListener(new RecyclerItemClickListener(this, searchRecentGif, new RecyclerItemClickListener.OnItemClickListener() {
@@ -588,6 +591,15 @@ public class SoftKeyboard extends InputMethodService
 
             }
         }));
+
+        imgBtnGoExplore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (gifpopupWindow == null || !gifpopupWindow.isShowing()) {
+                    showGifGridview("", historyviewmodel);
+                }
+            }
+        });
 
         return vx;
     }
