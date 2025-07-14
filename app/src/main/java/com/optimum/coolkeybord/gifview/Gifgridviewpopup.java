@@ -107,7 +107,7 @@ public class Gifgridviewpopup extends PopupWindow {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         //++++++++++++++it will be null as it is independent view++++++++++++++++
         @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.gifgridviewlayout, null, false);
-         recent_gfs = (LinearLayout) view.findViewById(R.id.recent_gfs);
+        recent_gfs = (LinearLayout) view.findViewById(R.id.recent_gfs);
         gifgridlay = (RecyclerView) view.findViewById(R.id.gridlay);
         recentgifrec = (RecyclerView) view.findViewById(R.id.recentgif);
         ///+++++++++++++++++++++++++++++++++++++++++++Gif made++++++++++++++++++++++++++++++++++++++++++++++
@@ -182,29 +182,29 @@ public class Gifgridviewpopup extends PopupWindow {
                 try {
                     JSONObject obejct   = new JSONObject(gifEntities.get(i).gifjson);
                     Log.w("gifs" , "saved"+obejct.getString("gif"));
-                if( i==0){
+                    if( i==0){
 //                        Log.e("gifs" , "saved"+obejct.toString());
                         recentsubgifdataArrayList.add(new Gifdata(obejct.getString("multiline_text") ,obejct.getString("gif")
                                 ,obejct.getString("thumbnail_gif") ,obejct.getString("youtube_url") , false));
-                         firstgif = obejct;
+                        firstgif = obejct;
 
 
-                }
-                else {
-                    try {
-                        assert firstgif != null;
-                        if(!(firstgif.getString("gif").equals(obejct.getString("gif"))))
-
-                        {
-                            recentsubgifdataArrayList.add(new Gifdata(obejct.getString("multiline_text") ,obejct.getString("gif")
-                                    ,obejct.getString("thumbnail_gif") ,obejct.getString("youtube_url") , false));
-                        }else {
-                            firstgif = obejct;
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
-                }
+                    else {
+                        try {
+                            assert firstgif != null;
+                            if(!(firstgif.getString("gif").equals(obejct.getString("gif"))))
+
+                            {
+                                recentsubgifdataArrayList.add(new Gifdata(obejct.getString("multiline_text") ,obejct.getString("gif")
+                                        ,obejct.getString("thumbnail_gif") ,obejct.getString("youtube_url") , false));
+                            }else {
+                                firstgif = obejct;
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -250,14 +250,24 @@ public class Gifgridviewpopup extends PopupWindow {
             setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             Intent intent = new Intent(view12.getContext() ,DictionaryActivity.class);
             intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
-          view12.getContext().startActivity(intent);
+            view12.getContext().startActivity(intent);
         });
 
+        // Normalize empty search input to trigger recent + categories
         Log.e("searchtext" ,""+searchtext);
-        if(searchtext.equals(""))
+        if(searchtext == null || searchtext.trim().isEmpty() || searchtext.equalsIgnoreCase("null"))     // Fix: Show recent GIFs and categories when no search input is entered
         {
+            Log.d("Gifgridviewpopup","Search text is empty showing recent + categories.");
+            recentgifrec.setVisibility(View.VISIBLE);
+            gifgridlay.setVisibility(View.GONE);
             makeCategories(view);
+            subcatrec.setVisibility(View.VISIBLE);
+            subcategoriesmodelArrayList.clear();
+            makeDefaultSubcategories();
         }else {
+            Log.d("Gifridviewpopup","Search text: " + searchtext);  // If input is present, load matched gifs from API
+            recentgifrec.setVisibility(View.GONE);
+            gifgridlay.setVisibility(View.VISIBLE);
             getSubcategorieswithString(searchtext , mContext ,view);
         }
         emojis_keyboard_image =  view.findViewById(R.id.emojis_keyboard_image);
@@ -479,9 +489,23 @@ public class Gifgridviewpopup extends PopupWindow {
                     }
                 }
             });
+            //Auto-select first category and its subcategories if search is empty
             if(searchtext.isEmpty())
             {
                 categoriesmodelArrayList.get(0).setSelectedornot(true);
+
+                if (subcatadapter != null) {
+                    subcatadapter.notifyItemChanged(0);
+                } else {
+                    Log.e("Gifgridviewpopup", "Subcatadapter is null at position" + 0);
+                }
+
+                // Load gifs for first subcategory
+                if (!subcategoriesmodelArrayList.isEmpty()) {
+                    getSubcategories(subcategoriesmodelArrayList.get(0).getSubcategoryid(), mContext, 1);
+                }else{
+                    Log.e("Subcategory", "Empty subcategory list. Skipping default subcategory call.");
+                }
             }else {
                 context.findViewById(R.id.emojis_keyboard_image).setBackground(context.getContext().getDrawable(R.drawable.selectedgif));
             }
@@ -499,6 +523,7 @@ public class Gifgridviewpopup extends PopupWindow {
                 }
                 subcatadapter = new Subcatadapter( subcategoriesmodelArrayList, mContext);
                 subcatrec.setAdapter(subcatadapter);
+                subcatrec.setVisibility(View.VISIBLE);
 
                 subcatrec.addOnItemTouchListener(new RecyclerItemClickListener(mContext, subcatrec, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
@@ -520,7 +545,10 @@ public class Gifgridviewpopup extends PopupWindow {
             if(!subcategoriesmodelArrayList.isEmpty())
             {
                 subcategoriesmodelArrayList.get(0).setSelectedornot(true);
-                subcatadapter.notifyItemChanged(0);
+                if (subcatadapter != null) {
+                    subcatadapter.notifyDataSetChanged();
+                }
+
                 try{
                     Log.e("subcategoriesmodel" ,""+ subcategoriesmodelArrayList.toString());
                     getSubcategories(subcategoriesmodelArrayList.get(0).getSubcategoryid() ,mContext, 1);
@@ -550,15 +578,15 @@ public class Gifgridviewpopup extends PopupWindow {
         progresbarfulli.setVisibility(View.VISIBLE);
         progresbarfull.animate();
         progresbarfull.setIndeterminate(true);
-      SettingSesson settingSesson =  new SettingSesson(mContext);
+        SettingSesson settingSesson =  new SettingSesson(mContext);
         RequestQueue queue = Volley.newRequestQueue(mContext);
         //String subcaturl ="https://d9.technikh.com/index.php/api/v1/gif/search/all?sub-category-id="+subcategoryid+"&languages="+ settingSesson.getSlelectedlang() +"&current_page="+pagenumber;
         //String subcaturl ="https://staticapis.pragament.com/language_learning/gif-data.json";
         String subcaturl ="https://expressjs-api-chat-keyboard.onrender.com/api/v1/items?sub-category-id="+subcategoryid+"&languages="+ settingSesson.getSlelectedlang() +"&current_page="+pagenumber;
-      if(pagenumber ==1)
-      {
-          subgifdataArrayList.clear();
-      }
+        if(pagenumber ==1)
+        {
+            subgifdataArrayList.clear();
+        }
 
 // Request a string response from the provided URL.
         JsonObjectRequest subcatjsonObjectRequest = new JsonObjectRequest(subcaturl, new Response.Listener<JSONObject>() {
@@ -682,6 +710,30 @@ public class Gifgridviewpopup extends PopupWindow {
 
     public interface onGifclickedListner {
         void onGifclicked(Gifdata gifitem, SettingSesson settingSesson ,int place);
+    }
+
+    private void makeDefaultSubcategories() {
+        if (categoriesmodelArrayList.isEmpty()) return;
+
+        // Auto select the first category
+        categoriesmodelArrayList.get(0).setSelectedornot(true);
+        categoriesAdapter.notifyItemChanged(0);
+
+        // Get subcategories of first category
+        List<Sub_catitemModel> defaultSubs = categoriesmodelArrayList.get(0).getSub_catitemModels();
+        subcategoriesmodelArrayList.clear();
+        subcategoriesmodelArrayList.addAll(defaultSubs);
+
+        if (!subcategoriesmodelArrayList.isEmpty()) {
+            subcategoriesmodelArrayList.get(0).setSelectedornot(true);
+            subcatadapter = new Subcatadapter(subcategoriesmodelArrayList, mContext);
+            subcatrec.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
+            subcatrec.setAdapter(subcatadapter);
+            subcatadapter.notifyItemChanged(0);
+
+            // Load gifs for first subcategory
+            getSubcategories(subcategoriesmodelArrayList.get(0).getSubcategoryid(), mContext, 1);
+        }
     }
 
 }

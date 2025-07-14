@@ -219,6 +219,7 @@ public class SoftKeyboard extends InputMethodService
 
         searched = vx.findViewById(R.id.searched);
         LinearLayout settingsimg = vx.findViewById(R.id.settingsimg);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         historyrecs = vx.findViewById(R.id.historyrecs);
         historyrecs.setLayoutManager(new LinearLayoutManager(vx.getContext(), LinearLayoutManager.HORIZONTAL, false));
         searchimg = vx.findViewById(R.id.searchimg);
@@ -226,6 +227,11 @@ public class SoftKeyboard extends InputMethodService
         searchimgdone = vx.findViewById(R.id.searchimgdone);
 //        mInputView = (LatinKeyboardView) vx.findViewById(R.id.keyboardxx);
         mInputView = vx.findViewById(R.id.keyboardxx);
+//
+//        Makes keyboard appear
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
         keyboardxxview = vx.findViewById(R.id.keyboard);
         tvSuggestion1 = vx.findViewById(R.id.tvSuggestion1);
         tvSuggestion2 = vx.findViewById(R.id.tvSuggestion2);
@@ -1841,7 +1847,12 @@ public class SoftKeyboard extends InputMethodService
                 gifpopupWindow.setSizeForSoftKeyboard();
                 gifpopupWindow.setSize(gifpopupWindow.getWidth(), (gifpopupWindow.getHeight()));
 //                gifpopupWindow.setSize(mQwertyKeyboard.getMinWidth() +20, (mQwertyKeyboard.getHeight() +120));
-                gifpopupWindow.showAtLocation(mInputView.getRootView(), Gravity.BOTTOM, 0, 0);
+                View tokenView = getWindow().getWindow().getDecorView();
+                if(tokenView != null && tokenView.getWindowToken() != null) {
+                    gifpopupWindow.showAtLocation(tokenView, Gravity.BOTTOM, 0, 0);
+                } else {
+                    Log.e("softkeyboard", "Cannot show popup: tokenView or its token is null");;
+                }
                 gifpopupWindow.setOnGifclickedListnermethod((gifitem, settingSesson, pos1) -> {
                     settingSesson = new SettingSesson(gifpopupWindow.getContentView().getContext());
 
