@@ -52,6 +52,7 @@ import androidx.core.content.FileProvider;
 import androidx.core.view.inputmethod.EditorInfoCompat;
 import androidx.core.view.inputmethod.InputConnectionCompat;
 import androidx.core.view.inputmethod.InputContentInfoCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -87,8 +88,10 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -160,7 +163,8 @@ public class SoftKeyboard extends InputMethodService
     private LatinKeyboard mSymbolsKeyboard;
     private MaterialTextView tvSuggestion1, tvSuggestion2, tvSuggestion3;
     private Button btnRealTimeSearchStatus;
-    private RecyclerView rvRealTimeSearch;
+    private RecyclerView rvRealTimeSearch, searchRecentGif;
+    private LinearLayout llMainRecentView, imgBtnGoExplore;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private Runnable workRunnable;
@@ -170,6 +174,8 @@ public class SoftKeyboard extends InputMethodService
     private final ArrayList<String> transliteratedWords = new ArrayList<>();
     private int currentTranslationIndex = 0;
     private int currentTransliterationIndex = 0;
+
+    ArrayList<Gifdata> recentsubgifdataArrayList;
 
     @Override
     public void onCreate() {
@@ -231,7 +237,11 @@ public class SoftKeyboard extends InputMethodService
         tvSuggestion2 = vx.findViewById(R.id.tvSuggestion2);
         tvSuggestion3 = vx.findViewById(R.id.tvSuggestion3);
         rvRealTimeSearch = vx.findViewById(R.id.rvRealTimeSearch);
+        searchRecentGif = vx.findViewById(R.id.searchRecentGif);
         btnRealTimeSearchStatus = vx.findViewById(R.id.btnRealTimeSearchStatus);
+        llMainRecentView = vx.findViewById(R.id.llMainRecentView);
+        imgBtnGoExplore = vx.findViewById(R.id.imgBtnGoExplore);
+        recentsubgifdataArrayList = new ArrayList<Gifdata>();
 //        settingSesson = new SettingSesson(vx.getContext());
         settingsimg.setOnClickListener(view -> {
 //                getCurrentInputConnection().commitText("",1);
@@ -251,6 +261,7 @@ public class SoftKeyboard extends InputMethodService
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s == null) {
+                    llMainRecentView.setVisibility(View.VISIBLE);
                     cancelimg.setVisibility(View.VISIBLE);
                     searchimgdone.setVisibility(View.GONE);
                 }else {
@@ -272,6 +283,7 @@ public class SoftKeyboard extends InputMethodService
                            @Override
                            public void run() {
                                realTimeSearch(s.toString());
+                               llMainRecentView.setVisibility(View.GONE);
                                fetchSuggestion(queryText, new SuggestionListener() {
                                    @Override
                                    public void onSuggestionReceived(ArrayList<String> suggestions) {
@@ -305,6 +317,7 @@ public class SoftKeyboard extends InputMethodService
                        cancelimg.setVisibility(View.GONE);
                        searchimgdone.setVisibility(View.VISIBLE);
                    } else {
+                       llMainRecentView.setVisibility(View.VISIBLE);
                        handler.removeCallbacks(workRunnable);
                        btnRealTimeSearchStatus.setVisibility(View.GONE);
                        rvRealTimeSearch.setVisibility(View.GONE);
@@ -458,6 +471,140 @@ public class SoftKeyboard extends InputMethodService
 
         btnRealTimeSearchStatus.setOnClickListener(view -> {
             handleGifNotFound(searched.getText().toString());
+        });
+
+        if (searched.getText().toString().equals("")) {
+            llMainRecentView.setVisibility(View.VISIBLE);
+            historyviewmodel = new Historyviewmodel(getApplication());
+
+            historyviewmodel.getmAllRecentGifs().observeForever( gifEntities ->{
+                if(gifEntities.isEmpty())
+                    return;
+                recentsubgifdataArrayList.clear();
+                JSONObject firstgif = null;
+                for(int i=0;i<gifEntities.size();i++)
+                {
+
+                    try {
+                        JSONObject obejct   = new JSONObject(gifEntities.get(i).gifjson);
+                        Log.w("gifs" , "saved"+obejct.getString("gif"));
+                        if( i==0){
+                            recentsubgifdataArrayList.add(new Gifdata(obejct.getString("multiline_text") ,obejct.getString("gif")
+                                    ,obejct.getString("thumbnail_gif") ,obejct.getString("youtube_url") , false));
+                            firstgif = obejct;
+
+
+                        }
+                        else {
+                            try {
+                                assert firstgif != null;
+                                if(!(firstgif.getString("gif").equals(obejct.getString("gif"))))
+
+                                {
+                                    recentsubgifdataArrayList.add(new Gifdata(obejct.getString("multiline_text") ,obejct.getString("gif")
+                                            ,obejct.getString("thumbnail_gif") ,obejct.getString("youtube_url") , false));
+                                }else {
+                                    firstgif = obejct;
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Set<Gifdata> set = new HashSet<>(recentsubgifdataArrayList);
+                    recentsubgifdataArrayList.clear();
+                    recentsubgifdataArrayList.addAll(set);
+                    Gifgridviewadapter recentgifgridviewadapter = new Gifgridviewadapter(recentsubgifdataArrayList, this);
+                    searchRecentGif.setAdapter(recentgifgridviewadapter);
+                    searchRecentGif.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+                    recentgifgridviewadapter.notifyDataSetChanged();
+                }
+
+            });
+        } else  {
+            llMainRecentView.setVisibility(View.GONE);
+        }
+
+        searchRecentGif.addOnItemTouchListener(new RecyclerItemClickListener(this, searchRecentGif, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                InputConnection ic = getCurrentInputConnection();
+                Gifdata gifdata = recentsubgifdataArrayList.get(position);
+                if (isLocalGifSupported()) {
+                    if(settingSesson.getAppendlink()) {
+
+                        ic.commitText(gifdata.getYoutubeUrl()  ,15);
+                        ic.finishComposingText();
+                    }else  if(settingSesson.getgiflink()) {
+                        ic.commitText(gifdata.getMultilineText()  ,15);
+                        ic.finishComposingText();
+                    }
+                } else {
+                    ic.commitText(gifdata.getYoutubeUrl() + "\n" +gifdata.getMultilineText() ,15);
+                    ic.finishComposingText();
+                }
+
+                Glide.with(SoftKeyboard.this).asGif()
+                        .load(gifdata.getGif())
+                        .into(new SimpleTarget<GifDrawable>() {
+                            @Override
+                            public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                                InputConnection inputConnection = getCurrentInputConnection();
+                                if (isLocalGifSupported()) {
+                                    if (settingSesson.getAppendlink()) {
+                                        inputConnection.commitText(gifdata.getYoutubeUrl(), 15);
+                                        inputConnection.finishComposingText();
+                                    } else {
+                                        inputConnection.commitText(gifdata.getMultilineText(), 15);
+                                        inputConnection.finishComposingText();
+                                    }
+                                } else {
+                                    inputConnection.commitText(gifdata.getYoutubeUrl() + "\n" + gifdata.getMultilineText() ,15);
+                                    inputConnection.finishComposingText();
+                                }
+                            }
+
+                            @Override
+                            public void onResourceReady(@NonNull GifDrawable resource, @Nullable Transition<? super GifDrawable> transition) {
+                                ByteBuffer byteBuffer = resource.getBuffer().duplicate();
+                                FileOutputStream output;
+                                try {
+                                    imagesDir = new File(getFilesDir(), "sendgifs");
+                                    if (!(imagesDir.exists())) {
+                                        imagesDir.mkdir();
+                                    }
+                                    mGifFile = File.createTempFile("gifitem", ".gif", imagesDir);
+                                    output = new FileOutputStream(mGifFile);
+                                    byteBuffer.rewind();
+                                    byte[] bytes = new byte[byteBuffer.remaining()];
+                                    byteBuffer.get(bytes);
+                                    output.write(bytes);
+                                    output.close();
+                                    SoftKeyboard.this.doCommitContent(mGifFile);
+
+
+                                } catch (Exception e) {
+                                    Log.d("RealTimeSearch", "onResourceReady: " + e.getLocalizedMessage());
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onItemLongClick(View view, int position) {
+
+            }
+        }));
+
+        imgBtnGoExplore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (gifpopupWindow == null || !gifpopupWindow.isShowing()) {
+                    showGifGridview("", historyviewmodel);
+                }
+            }
         });
 
         return vx;

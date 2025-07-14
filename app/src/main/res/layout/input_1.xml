@@ -100,6 +100,25 @@
                     </ImageView>
 
                 </FrameLayout>
+
+                <LinearLayout
+
+                    android:id="@+id/imgBtnGoExplore"
+                    android:padding="5dp"
+                    android:background="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:foregroundGravity="center_vertical"
+                        android:src="@drawable/explore_24px">
+                    </ImageView>
+
+                </LinearLayout>
+
                 <LinearLayout
 
                     android:id="@+id/settingsimg"
@@ -107,6 +126,11 @@
                     android:background="@color/black"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
+
+
+
+
+
                     <ImageView
 
                         android:id="@+id/settings"
@@ -203,6 +227,33 @@
             android:layout_height="wrap_content"/>
 
     </LinearLayout>
+
+
+
+    <LinearLayout
+        android:id="@+id/llMainRecentView"
+        android:background="@color/keyTextColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:paddingStart="12dp"
+            android:paddingEnd="0dp"
+            android:paddingTop="4dp"
+            android:text="Recently Used GIFs"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/searchRecentGif"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
         <com.optimum.coolkeybord.android.LatinKeyboardView
 
             android:id="@+id/keyboardxx"
